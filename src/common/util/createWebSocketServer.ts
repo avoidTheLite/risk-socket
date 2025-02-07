@@ -15,9 +15,9 @@ function createWebSocketServer(wsServer: Server) {
         })
         ws.on('message', (message) => {
             try {
-                const parsedMessage = JSON.parse(message.toString());
-                if (parsedMessage.action && parsedMessage.data) {
-                    // TODO Run commands here
+                const parsedMessage = JSON.parse(message.toString("utf-8"));
+                if (parsedMessage.data) {
+                    ws.send(JSON.stringify(parsedMessage));
                 } else {
                     ws.send(JSON.stringify({ error: 'Invalid message format' }));
                 }
