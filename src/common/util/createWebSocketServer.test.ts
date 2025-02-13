@@ -1,4 +1,4 @@
-import { beforeAll, beforeEach, afterAll, describe, it, expect } from '@jest/globals';
+import { beforeAll, afterAll, describe, it, expect } from '@jest/globals';
 import { startServer, TestWebSocket } from './webSocketTestUtils';
 
 const port = 8080;
