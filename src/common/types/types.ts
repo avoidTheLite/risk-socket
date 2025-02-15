@@ -3,15 +3,15 @@ export interface Player {
     id: string;
     name: string;
     color: string;
-    armies: number;
-    gameID: string;
+    armies?: number;
+    gameID?: string;
 }
 
 export interface Globe {
     id: string;
     name: string;
     playerMax: number;
-    countries: Country[];7
+    countries: Country[];
     continents: Continent[];
 }
 
@@ -19,9 +19,9 @@ export interface Country {
     id: string;
     name: string;
     continent: string;
-    ownerID: string;
     connectedTo: string[];
-    armies: number;
+    ownerID?: string;
+    armies?: number;
 }
 
 export interface Continent {
@@ -36,7 +36,7 @@ export interface Game {
     players: Player[];
     countries: Country[];
     continents: Continent[];
-    globe: Globe;
+    globeID: string;
     turn: number;
     phase: Phase;
     created_at?: string;

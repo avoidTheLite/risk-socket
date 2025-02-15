@@ -1,5 +1,5 @@
 import { beforeAll, afterAll, describe, it, expect } from '@jest/globals';
-import { startServer, TestWebSocket } from './webSocketTestUtils';
+import { startServer, TestWebSocket } from './test/webSocketTestUtils';
 
 const port = 8080;
 const url = `ws://localhost:${port}`;
