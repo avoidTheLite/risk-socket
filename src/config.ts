@@ -26,7 +26,7 @@ const config = appConfig({
         env: 'DB_URL',
       },
       dbPort: {
-        default: 5433,
+        default: 5432,
         env: 'DB_PORT',
       },
       dbUsername: {
@@ -39,7 +39,7 @@ const config = appConfig({
       },
       dbName: {
         env: 'DB_NAME',
-        default: 'risk-server',
+        default: 'risk-socket',
       },
 })
 

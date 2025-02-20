@@ -1,4 +1,4 @@
-import { Country, Continent, Globe } from "../../common/types/types";
+import { Country, Continent, Globe } from "../../types/types";
 function defaultGlobeSeed():Globe {
     let globe:Globe = {
     id: 'defaultGlobeID',

@@ -31,6 +31,7 @@ export interface Continent {
 }
 
 export interface Game {
+    saveName: string;
     id: string;
     name?: string;
     players: Player[];

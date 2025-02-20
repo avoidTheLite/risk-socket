@@ -1,6 +1,6 @@
 import { beforeAll, afterAll, describe, it, expect } from '@jest/globals';
 import newGame from './newGame';
-import {defaultGlobeSeed} from '../db/seeds/defaultGlobeSeed';
+import {defaultGlobeSeed} from '../common/util/test/defaultGlobeSeed';
 import createTestPlayers from '../common/util/test/createTestPlayers';
 import { playerCountError } from '../common/types/errors';
 
