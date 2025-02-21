@@ -15,14 +15,16 @@ describe('WebSocket Server', () => {
         server.close();
     })
 
-    it('Returns a response to client successfully', async () => {
+    it('Returns a response to client successfully during ECHO', async () => {
         const client = new TestWebSocket(url);
         await client.waitUntil('open');
 
         const testMessage = {
-            data: 'This is the Client test message'
+            data: { 
+                action: 'echo', 
+                message: 'This is the Client test message'
+            }
         }
-
         const responseMessage: string = await new Promise ((resolve) => {
             client.addEventListener('message', ({data}) => resolve(data.toString('utf-8')), {once: true});
             client.send(JSON.stringify(testMessage));

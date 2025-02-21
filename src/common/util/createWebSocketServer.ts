@@ -1,5 +1,6 @@
 import {WebSocketServer } from 'ws';
 import {Server} from 'http'
+import wsMessageHandler from '../../game/wsMessageHandler';
 
 function createWebSocketServer(wsServer: Server) {
     const wss: WebSocketServer = new WebSocketServer({
@@ -13,11 +14,18 @@ function createWebSocketServer(wsServer: Server) {
         ws.on('error', (error) => {
             console.error('WebSocket error:', error);
         })
-        ws.on('message', (message) => {
+        ws.on('message', async (message) => {
             try {
                 const parsedMessage = JSON.parse(message.toString("utf-8"));
                 if (parsedMessage.data) {
-                    ws.send(JSON.stringify(parsedMessage));
+                    const message = await wsMessageHandler(parsedMessage.data);
+                    const response = {
+                        data: {
+                            action: parsedMessage.data.action,
+                            message: message
+                        }
+                    }
+                    ws.send(JSON.stringify(response));
                 } else {
                     ws.send(JSON.stringify({ error: 'Invalid message format' }));
                 }
