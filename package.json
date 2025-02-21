@@ -6,7 +6,8 @@
   "scripts": {
     "test": "NODE_ENV=test jest --config src/jest.config.ts",
     "test:debug": "NODE_ENV=test jest --config src/jest.config.ts --detectOpenHandles",
-    "build": "npx tsc",
+    "build": "npx tsc --build tsconfig.json",
+    "clean": "npx tsc --build tsconfig.json --clean",
     "dev": "NODE_ENV=local concurrently \"npx tsc --watch\" \"nodemon -q dist/server.js\"",
     "docker:db": "docker-compose up -d",
     "db:migrate": "NODE_ENV=local knex migrate:latest --knexfile=\"src/knexfile.ts\"",
