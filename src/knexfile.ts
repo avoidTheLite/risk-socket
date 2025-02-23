@@ -44,19 +44,22 @@ const knexConfig: { [key: string]: Knex.Config } = {
         }
     },
     test: {
-        debug: true,
+        debug: false,
         client: 'sqlite3',
-        connection: defaultconnection,
+        connection: {
+        filename:  ':memory:'
+        },
         pool: {
             min: 2,
             max: 10,
         },
+        useNullAsDefault: true,
         migrations: {
             tableName: 'knex_migrations',
-            directory: './db/migrations',
+            directory: './src/db/migrations',
         },
         seeds: {
-            directory: './db/seeds',
+            directory: './src/db/seeds',
         }
     },
     production: {

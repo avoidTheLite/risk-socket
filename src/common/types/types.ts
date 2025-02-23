@@ -15,6 +15,14 @@ export interface Globe {
     continents: Continent[];
 }
 
+export interface GlobeRecord {
+    id: string;
+    name: string;
+    playerMax: number;
+    countries: string;
+    continents: string;
+}
+
 export interface Country {
     id: string;
     name: string;
@@ -44,6 +52,20 @@ export interface Game {
     updated_at?: string;
 }
 
+export interface GameRecord {
+    saveName: string;
+    id: string;
+    name?: string;
+    players: string;
+    countries: string;
+    continents: string;
+    globeID: string;
+    turn: number;
+    phase: Phase;
+    created_at?: string;
+    updated_at?: string;
+}
+
 export type Phase = "deploy" | "play" | "end";
 
 export interface Engagement {
@@ -62,4 +84,27 @@ export enum LogLevel {
     WARN = 'warn',
     INFO = 'info',
     DEBUG = 'debug',
+}
+
+export enum WsActions {
+    NewGame = 'newGame',
+    Echo = 'echo',
+    InvalidAction = 'invalidAction'
+    
+}
+export interface WsRequest {
+    data: {
+        action: WsActions;
+        message: string;
+        players?: Player[];
+        globeID?: string;
+    }
+}
+
+export interface WsResponse {
+    data: {
+        action: string;
+        message: string;
+        status: string;
+    }
 }

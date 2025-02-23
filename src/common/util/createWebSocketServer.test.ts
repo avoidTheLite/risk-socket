@@ -1,5 +1,6 @@
 import { beforeAll, afterAll, describe, it, expect } from '@jest/globals';
 import { startServer, TestWebSocket } from './test/webSocketTestUtils';
+import createTestPlayers from './test/createTestPlayers';
 
 const port = 8080;
 const url = `ws://localhost:${port}`;
@@ -30,7 +31,8 @@ describe('WebSocket Server', () => {
             client.send(JSON.stringify(testMessage));
         })
 
-        expect(JSON.parse(responseMessage)).toEqual(testMessage);
+        expect(JSON.parse(responseMessage).data.message).toEqual(testMessage.data.message);
+        expect(JSON.parse(responseMessage).data.status).toEqual('success');
         client.close();
         await client.waitUntil('close');
     })
@@ -47,7 +49,8 @@ describe('WebSocket Server', () => {
             client.send(JSON.stringify(testMessage));
         })
 
-        expect(JSON.parse(responseMessage)).toEqual(expectedResponse)
+        expect(JSON.parse(responseMessage).data.status).toEqual('failure');
+        expect(JSON.parse(responseMessage).data.action).toEqual('invalidAction');
         client.close();
         await client.waitUntil('close');
     })
@@ -64,6 +67,29 @@ describe('WebSocket Server', () => {
         })
 
         expect(JSON.parse(responseMessage)).toEqual(expectedResponse)
+        client.close();
+        await client.waitUntil('close');
+    })
+
+    it('Returns a failure when an error occurs during processing', async () => {
+        const client = new TestWebSocket(url);
+        await client.waitUntil('open');
+        const testMessage = {
+            data: { 
+                action: 'newGame', 
+                message: 'This is the Client test message',
+                players: createTestPlayers(2),
+                globe: 'invalidGlobeID'
+            }
+        }
+
+        const responseMessage: string = await new Promise ((resolve) => {
+            client.addEventListener('message', ({data}) => resolve(data.toString('utf-8')), {once: true});
+            client.send(JSON.stringify(testMessage));
+        })
+
+        expect(JSON.parse(responseMessage).data.status).toEqual('failure');
+        expect(JSON.parse(responseMessage).data.message).toEqual('There was an error procesing your request');
         client.close();
         await client.waitUntil('close');
     })

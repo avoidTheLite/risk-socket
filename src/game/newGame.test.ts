@@ -9,13 +9,13 @@ describe('New game', () => {
     it('should create a new game using default globe and default playermax', async () => {
         let globe = defaultGlobeSeed();
         let players = createTestPlayers(globe.playerMax);
-        let game = await newGame(players, globe);
+        let game = await newGame(players, globe.id);
         expect(game.id).toBeTruthy();
     })
 
     it('should throw an error if player count exceeds globe player max', async () => {
         let globe = defaultGlobeSeed();
         let players = createTestPlayers(globe.playerMax + 1);
-        await expect(newGame(players, globe)).rejects.toThrow(playerCountError);
+        await expect(newGame(players, globe.id)).rejects.toThrow(playerCountError);
     })
 })

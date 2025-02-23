@@ -1,12 +1,13 @@
 import { Knex } from "knex";
 import { defaultGlobeSeed } from "../../common/util/test/defaultGlobeSeed";
 import createTestPlayers from "../../common/util/test/createTestPlayers";
+import { GameRecord } from "../../common/types/types";
 
 export async function seed(knex: Knex): Promise<void> {
     await knex('gameState').del();
     const globe = defaultGlobeSeed();
     const players = createTestPlayers(4);
-    const game = {
+    const game: GameRecord = {
         saveName: 'defaultGameID - autosave turn 0',
         id: 'defaultGameID',
         name: '4 player test game',

@@ -3,14 +3,14 @@ import { Knex } from 'knex';
 export async function up(knex: Knex): Promise<void> {
     return knex.schema.createTable('gameState', (table) => {
         table.string('saveName').primary();
-        table.string('id').notNullable();
+        table.string('id');
         table.string('name');
-        table.string('globeID').notNullable();
-        table.integer('turn').notNullable().defaultTo(0);
-        table.string('phase').notNullable().defaultTo('deploy');
-        table.jsonb('players').notNullable().defaultTo('{}');
-        table.jsonb('countries').notNullable().defaultTo('{}');
-        table.jsonb('continents').notNullable().defaultTo('{}');
+        table.string('globeID');
+        table.integer('turn');
+        table.string('phase');
+        table.jsonb('players');
+        table.jsonb('countries');
+        table.jsonb('continents');
         table.timestamps(true, true);
     });
 }

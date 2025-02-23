@@ -1,13 +1,15 @@
 import { beforeAll, beforeEach, afterAll } from "@jest/globals";
+import db from "./db/db";
 
 beforeAll(async () => {
-    // do something before all tests
+    await db.migrate.latest();
+    await db.seed.run();
 });
 
 beforeEach(async () => {
-    // do something before each test
+
 });
 
 afterAll(async () => {
-    // do something after all tests
+    await db.destroy();
 });
