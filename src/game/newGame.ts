@@ -1,4 +1,4 @@
-import { GameRecord, Game, Player, Globe, Country, Continent} from '../common/types/types';
+import { GameRecord, Game, Player, Globe } from '../common/types/types';
 import ShortUniqueId = require('short-unique-id');
 import { playerCountError } from '../common/types/errors';
 import db from '../db/db';

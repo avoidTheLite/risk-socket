@@ -1,4 +1,4 @@
-import { beforeAll, afterAll, describe, it, expect } from '@jest/globals';
+import { describe, it, expect } from '@jest/globals';
 import newGame from './newGame';
 import {defaultGlobeSeed} from '../common/util/test/defaultGlobeSeed';
 import createTestPlayers from '../common/util/test/createTestPlayers';
