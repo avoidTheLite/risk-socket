@@ -21,26 +21,26 @@ const config = appConfig({
         default: 'debug',
         env: 'LOG_LEVEL',
       },
-    //   dbHost: {
-    //     default: 'localhost',
-    //     env: 'DB_URL',
-    //   },
-    //   dbPort: {
-    //     default: 5433,
-    //     env: 'DB_PORT',
-    //   },
-    //   dbUsername: {
-    //     default: 'postgres',
-    //     env: 'DB_USER',
-    //   },
-    //   dbPassword: {
-    //     default: 'password',
-    //     env: 'DB_PASSWORD',
-    //   },
-    //   dbName: {
-    //     env: 'DB_NAME',
-    //     default: 'risk-server',
-    //   },
+      dbHost: {
+        default: 'localhost',
+        env: 'DB_URL',
+      },
+      dbPort: {
+        default: 5432,
+        env: 'DB_PORT',
+      },
+      dbUsername: {
+        default: 'postgres',
+        env: 'DB_USER',
+      },
+      dbPassword: {
+        default: 'password',
+        env: 'DB_PASSWORD',
+      },
+      dbName: {
+        env: 'DB_NAME',
+        default: 'risk-socket',
+      },
 })
 
 export default config;

@@ -6,8 +6,13 @@
   "scripts": {
     "test": "NODE_ENV=test jest --config src/jest.config.ts",
     "test:debug": "NODE_ENV=test jest --config src/jest.config.ts --detectOpenHandles",
-    "build": "npx tsc",
-    "dev": "NODE_ENV=local concurrently \"npx tsc --watch\" \"nodemon -q dist/server.js\""
+    "build": "npx tsc --build tsconfig.json",
+    "clean": "npx tsc --build tsconfig.json --clean",
+    "dev": "NODE_ENV=local concurrently \"npx tsc --watch\" \"nodemon -q dist/server.js\"",
+    "docker:db": "docker-compose up -d",
+    "db:migrate": "NODE_ENV=local knex migrate:latest --knexfile=\"src/knexfile.ts\"",
+    "db:rollback": "NODE_ENV=local knex migrate:rollback --all --knexfile=\"src/knexfile.ts\"",
+    "db:seed": "NODE_ENV=local knex seed:run --knexfile=\"src/knexfile.ts\""  
   },
   "keywords": [],
   "author": "",
@@ -17,6 +22,7 @@
     "express": "^4.21.2",
     "knex": "^3.1.0",
     "pg": "^8.13.1",
+    "short-unique-id": "^5.2.0",
     "ws": "^8.18.0"
   },
   "devDependencies": {

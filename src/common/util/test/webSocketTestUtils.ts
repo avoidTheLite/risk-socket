@@ -1,6 +1,6 @@
 import http from 'http'
 import { WebSocket } from 'ws';
-import createWebSocketServer from './createWebSocketServer';
+import createWebSocketServer from '../createWebSocketServer';
 
 export function startServer(port) {
     const server = http.createServer();

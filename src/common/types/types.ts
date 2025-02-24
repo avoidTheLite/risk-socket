@@ -3,25 +3,33 @@ export interface Player {
     id: string;
     name: string;
     color: string;
-    armies: number;
-    gameID: string;
+    armies?: number;
+    gameID?: string;
 }
 
 export interface Globe {
     id: string;
     name: string;
     playerMax: number;
-    countries: Country[];7
+    countries: Country[];
     continents: Continent[];
+}
+
+export interface GlobeRecord {
+    id: string;
+    name: string;
+    playerMax: number;
+    countries: string;
+    continents: string;
 }
 
 export interface Country {
     id: string;
     name: string;
     continent: string;
-    ownerID: string;
     connectedTo: string[];
-    armies: number;
+    ownerID?: string;
+    armies?: number;
 }
 
 export interface Continent {
@@ -31,12 +39,27 @@ export interface Continent {
 }
 
 export interface Game {
+    saveName: string;
     id: string;
     name?: string;
     players: Player[];
     countries: Country[];
     continents: Continent[];
-    globe: Globe;
+    globeID: string;
+    turn: number;
+    phase: Phase;
+    created_at?: string;
+    updated_at?: string;
+}
+
+export interface GameRecord {
+    saveName: string;
+    id: string;
+    name?: string;
+    players: string;
+    countries: string;
+    continents: string;
+    globeID: string;
     turn: number;
     phase: Phase;
     created_at?: string;
@@ -61,4 +84,27 @@ export enum LogLevel {
     WARN = 'warn',
     INFO = 'info',
     DEBUG = 'debug',
+}
+
+export enum WsActions {
+    NewGame = 'newGame',
+    Echo = 'echo',
+    InvalidAction = 'invalidAction'
+    
+}
+export interface WsRequest {
+    data: {
+        action: WsActions;
+        message: string;
+        players?: Player[];
+        globeID?: string;
+    }
+}
+
+export interface WsResponse {
+    data: {
+        action: string;
+        message: string;
+        status: string;
+    }
 }

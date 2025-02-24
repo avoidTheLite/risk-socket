@@ -1,0 +1,12 @@
+services:
+  postgres:
+    image: 'postgres:17.3'
+    ports:
+      - ${DB_PORT}:5432
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=risk-socket
+    env_file:
+      - .env
+      

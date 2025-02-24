@@ -1,0 +1,1 @@
+export const GAMESTATE_TABLE = 'gameState';
