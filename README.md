@@ -25,6 +25,18 @@ git clone https://github.com/avoidTheLite/risk-socket.git
 ```bash
 npm install
 ```
+4) Add .env file with:
+
+```ENV
+SERVER_PORT=3001
+SOCKET_PORT=8080
+DB_USER=postgres
+DB_PASSWORD=password
+DB_NAME=risk-socket
+DB_URL=localhost
+DB_PORT=5432
+
+```
 4) Setup postgreSQL database to run locally (refer to scripts in package.json)
 
 Run the image using docker compose   
@@ -59,7 +71,7 @@ To test using Postman, first start the database and server.
 ws://localhost:8080/
 ```
 2) Click 'connect'
-3) Start a new game with the following message
+3) Start a new game with the following message:
 
 ```JSON
 {
