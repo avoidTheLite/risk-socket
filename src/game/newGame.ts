@@ -4,6 +4,7 @@ import { playerCountError } from '../common/types/errors';
 import db from '../db/db';
 import loadGame from './loadGame';
 import loadGlobe from './loadGlobe';
+import assignCountries from './services/assignCountries';
 
 let uid = new ShortUniqueId({ length: 10 });
 
@@ -24,6 +25,7 @@ async function newGame(players: Player[], globeID: string) {
         gameRecord.saveName = gameRecord.id + ' - autosave turn ' + gameRecord.turn;
         if (players.length <= globe.playerMax) {
             console.log(`New game created: ${gameRecord.id} with save name: ${gameRecord.saveName}`)
+            gameRecord.countries = JSON.stringify(await assignCountries(players, globe.countries))
             await db('gameState').insert(gameRecord);
             }
         else {

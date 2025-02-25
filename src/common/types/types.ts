@@ -94,6 +94,7 @@ export enum WsActions {
 }
 export interface WsRequest {
     data: {
+        gameID?: string;
         action: WsActions;
         message: string;
         players?: Player[];
