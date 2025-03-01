@@ -1,10 +1,10 @@
-import { GameRecord, Game, Player, Globe } from '../common/types/types';
+import { Game, Player, Globe } from '../common/types/types';
 import ShortUniqueId = require('short-unique-id');
 import { playerCountError } from '../common/types/errors';
-import db from '../db/db';
-import loadGame from './loadGame';
+import saveGame from './saveGame';
 import loadGlobe from './loadGlobe';
 import assignCountries from './services/assignCountries';
+import assignArmies from './services/assignArmies';
 
 let uid = new ShortUniqueId({ length: 10 });
 
@@ -12,29 +12,29 @@ async function newGame(players: Player[], globeID: string) {
     try {
         console.log(`loading game with globe ID ${globeID}`)
         let globe: Globe = await loadGlobe(globeID);
-        let gameRecord: GameRecord = {
-            saveName: '',
-            id: uid.rnd(),
-            players: JSON.stringify(players),
-            countries: JSON.stringify(globe.countries),
-            continents: JSON.stringify(globe.continents),
-            globeID: globe.id,
-            turn: 0,
-            phase: 'deploy',    
-        }
-        gameRecord.saveName = gameRecord.id + ' - autosave turn ' + gameRecord.turn;
-        if (players.length <= globe.playerMax) {
-            console.log(`New game created: ${gameRecord.id} with save name: ${gameRecord.saveName}`)
-            gameRecord.countries = JSON.stringify(await assignCountries(players, globe.countries))
-            await db('gameState').insert(gameRecord);
-            }
-        else {
+        if (players.length > globe.playerMax) {
             throw new playerCountError({
                 message:`Globe supports up to ${globe.playerMax} players, but ${players.length} players were provided`
             })
         }
-        const game = await loadGame(gameRecord.saveName);
+        let game: Game = {
+            saveName: '',
+            id: uid.rnd(),
+            players: players,
+            countries: globe.countries,
+            continents: globe.continents,
+            globeID: globe.id,
+            turn: 0,
+            phase: 'deploy',
+            activePlayerIndex: 0,    
+        }
+        game.saveName = game.id + ' - autosave turn ' + game.turn;
+        game.countries = await assignCountries(players, globe.countries)
+        game.players = await assignArmies(players, globe.countries)
+        game = await saveGame(game) 
+        console.log(`New game created: ${game.id} with save name: ${game.saveName}`)
         return game
+    
     } catch (error) {
         throw error
     }

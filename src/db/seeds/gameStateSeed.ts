@@ -17,6 +17,7 @@ export async function seed(knex: Knex): Promise<void> {
         globeID: globe.id,
         turn: 0,
         phase: 'deploy',
+        activePlayerIndex: 0
     }
 
     await knex('gameState').insert(game) 
