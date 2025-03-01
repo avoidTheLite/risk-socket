@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "NODE_ENV=test jest --config src/jest.config.ts",
-    "test:debug": "NODE_ENV=test jest --config src/jest.config.ts --detectOpenHandles",
+    "test:debug": "NODE_ENV=test node --inspect-brk node_modules/.bin/jest --runInBand --config src/jest.config.ts",
+    "test:detect": "NODE_ENV=test jest --config src/jest.config.ts --detectOpenHandles",
     "build": "npx tsc --build tsconfig.json",
     "clean": "npx tsc --build tsconfig.json --clean",
     "dev": "NODE_ENV=local concurrently \"npx tsc --watch\" \"nodemon -q dist/server.js\"",

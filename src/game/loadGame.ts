@@ -34,6 +34,7 @@ export default async function loadGame(saveName: string): Promise<Game> {
                 globeID: gameRecord[0].globeID,
                 turn: gameRecord[0].turn,
                 phase: gameRecord[0].phase,
+                activePlayerIndex: gameRecord[0].activePlayerIndex,
                 created_at: gameRecord[0].created_at,
                 updated_at: gameRecord[0].updated_at
             }

@@ -1,0 +1,67 @@
+import saveGame from "./saveGame";
+import loadGame from "./loadGame";
+import db from "../db/db";
+import { describe, test, expect, jest } from "@jest/globals"
+import createTestGame from "../common/util/test/createTestGame";
+import { Game, GameRecord } from "../common/types/types";
+
+// jest.mock("../db/db", () => ({
+//     __esModule: true,
+//     default: jest.fn(() => ({
+//         insert: jest.fn().mockImplementation(() => Promise.resolve([1])),
+//     }))
+// }));
+jest.mock("../db/db", () => ({
+    __esModule: true,
+    default: jest.fn(() => ({
+        // insert: jest.fn<() => Promise<number[]>>().mockResolvedValueOnce([1]),
+        insert: jest.fn().mockResolvedValue([1])
+    }))
+}));
+
+jest.mock("./loadGame", () => ({
+    __esModule: true,
+    default: jest.fn().mockImplementation(() => Promise.resolve({
+        saveName: "testSave",
+        id: 1,
+        name: "Test Game",
+        players: [],
+        countries: [],
+        continents: [],
+        globeID: "globe123",
+        turn: 1,
+        phase: "setup"
+    }))
+}));
+
+describe('Save game - Unit Tests', () => {
+    
+    test('should call db.insert with correct data', async () => {
+        let game: Game = createTestGame(4);
+        await saveGame(game);
+
+        expect(db).toHaveBeenCalledWith('gameState');
+        expect(db.insert).toHaveBeenCalledWith(expect.objectContaining({
+            saveName: game.saveName,
+            id: game.id,
+            name: game.name,
+            players: JSON.stringify(game.players),
+            countries: JSON.stringify(game.countries),
+            continents: JSON.stringify(game.continents),
+            globeID: game.globeID,
+            turn: game.turn,
+            phase: game.phase
+        }));
+    })
+
+    test('should call load game with game.saveName', async () => {
+        let game: Game = createTestGame(4);
+        await saveGame(game);
+
+        expect(loadGame).toHaveBeenCalledWith(game.saveName);
+    })
+
+    test('should throw error if insert fails', async () => {
+        (db().insert as jest.Mock).mockImplementation(() => Promise.reject(new Error('Insert failed')));
+    })
+})

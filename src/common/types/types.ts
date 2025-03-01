@@ -36,6 +36,7 @@ export interface Continent {
     id: string;
     name: string;
     countries: string[];
+    armies: number;
 }
 
 export interface Game {
@@ -48,6 +49,7 @@ export interface Game {
     globeID: string;
     turn: number;
     phase: Phase;
+    activePlayerIndex: number;
     created_at?: string;
     updated_at?: string;
 }
@@ -62,12 +64,20 @@ export interface GameRecord {
     globeID: string;
     turn: number;
     phase: Phase;
+    activePlayerIndex: number;
     created_at?: string;
     updated_at?: string;
 }
 
 export type Phase = "deploy" | "play" | "end";
 
+export type TurnPhase = "start" | "deploy" | "combat" | "move" | "card";
+
+export interface Turn {
+    phase: TurnPhase;
+    earnedCard: boolean;
+    armiesEarned: number;
+}
 export interface Engagement {
     attackingCountry: string;
     defendingCountry: string;
@@ -94,6 +104,7 @@ export enum WsActions {
 }
 export interface WsRequest {
     data: {
+        gameID?: string;
         action: WsActions;
         message: string;
         players?: Player[];
