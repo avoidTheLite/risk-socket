@@ -109,6 +109,8 @@ export interface WsRequest {
         message: string;
         players?: Player[];
         globeID?: string;
+        saveName?: string;
+        playerID?: number;
     }
 }
 
@@ -117,5 +119,6 @@ export interface WsResponse {
         action: string;
         message: string;
         status: string;
+        gameState?: Game;
     }
 }
