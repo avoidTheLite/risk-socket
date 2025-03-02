@@ -3,7 +3,7 @@ import { Continent, Country } from "../../common/types/types";
 export default function calculateReinforcements(activePlayerIndex: number, countries: Country[], continents: Continent[]) {
     let countriesOwned: number = 0
     let reinforcements: number = 0
-    const countryMap = new Map<string, Country>();
+    const countryMap = new Map<number, Country>();
     countries.forEach(country => countryMap.set(country.id, country));
 
     for (let i = 0; i < continents.length; i++) {
@@ -16,7 +16,7 @@ export default function calculateReinforcements(activePlayerIndex: number, count
                 console.error(`Globe Data Error: Country not found: ${countryID}`);
                 continue;
             } else {
-                if (Number(country.ownerID) === activePlayerIndex) {
+                if (country.ownerID === activePlayerIndex) {
                     countriesOwnedInContinent += 1;
                 }
             }
@@ -27,7 +27,7 @@ export default function calculateReinforcements(activePlayerIndex: number, count
        
     }
     for (let i = 0; i < countries.length; i++) {
-        if (Number(countries[i].ownerID) === activePlayerIndex) {
+        if (countries[i].ownerID === activePlayerIndex) {
             countriesOwned += 1;
         }
        

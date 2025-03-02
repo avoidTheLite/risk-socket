@@ -1,6 +1,6 @@
 
 export interface Player {
-    id: string;
+    id: number;
     name: string;
     color: string;
     armies?: number;
@@ -24,18 +24,18 @@ export interface GlobeRecord {
 }
 
 export interface Country {
-    id: string;
+    id: number;
     name: string;
     continent: string;
-    connectedTo: string[];
-    ownerID?: string;
+    connectedTo: number[];
+    ownerID?: number;
     armies?: number;
 }
 
 export interface Continent {
-    id: string;
+    id: number;
     name: string;
-    countries: string[];
+    countries: number[];
     armies: number;
 }
 
