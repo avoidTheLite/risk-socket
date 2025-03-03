@@ -54,7 +54,8 @@ const testPlayerSeed: Player[] = [
 export default function createTestPlayers(playerCount: number) {
     let players: Player[] = [];
     for (let i = 0; i < playerCount; i++) {
-        players.push(testPlayerSeed[i]);
+        const newPlayer = new Player(i, testPlayerSeed[i].name, testPlayerSeed[i].color, testPlayerSeed[i].armies);
+        players.push(newPlayer);
     }
     return players
 }

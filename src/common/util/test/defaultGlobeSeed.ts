@@ -1,13 +1,14 @@
 import { Country, Continent, Globe } from "../../types/types";
+
+
 function defaultGlobeSeed():Globe {
-    let globe:Globe = {
-    id: 'defaultGlobeID',
-    name: 'Earth',
-    playerMax: 6,
-    countries: defaultCountrySeed(),
-    continents: defaultContinentSeed(),
-    }
-    return globe
+    return new Globe(
+    'defaultGlobeID',
+    'Earth',
+    6,
+    defaultCountrySeed(),
+    defaultContinentSeed(),
+    )
 }
 function defaultContinentSeed():Continent[] {
     return[
@@ -56,7 +57,7 @@ function defaultCountrySeed():Country[] {
             id: 0,
             name: 'Alaska',
             continent: 'North America',
-            connectedTo: [ 1, 5 ]
+            connectedTo: [ 1, 5 ],
           },
           {
             id: 1,
