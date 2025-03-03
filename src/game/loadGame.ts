@@ -13,6 +13,7 @@ export default async function loadGame(saveName: string): Promise<Game> {
         "gameState.globeID",
         "gameState.turn",
         "gameState.phase",
+        "gameState.activePlayerIndex",
         "gameState.created_at",
         "gameState.updated_at"
     ).from('gameState')
@@ -24,21 +25,17 @@ export default async function loadGame(saveName: string): Promise<Game> {
             })
         }
         else {
-            let game: Game = {
-                saveName: gameRecord[0].saveName,
-                id: gameRecord[0].id,
-                name: gameRecord[0].name,
-                players: gameRecord[0].players = typeof gameRecord[0].players === 'string' ? JSON.parse(gameRecord[0].players) : gameRecord[0].players,
-                countries: gameRecord[0].countries = typeof gameRecord[0].countries === 'string' ? JSON.parse(gameRecord[0].countries) : gameRecord[0].countries,
-                continents: gameRecord[0].continents = typeof gameRecord[0].continents === 'string' ? JSON.parse(gameRecord[0].continents) : gameRecord[0].continents,
-                globeID: gameRecord[0].globeID,
-                turn: gameRecord[0].turn,
-                phase: gameRecord[0].phase,
-                activePlayerIndex: gameRecord[0].activePlayerIndex,
-                created_at: gameRecord[0].created_at,
-                updated_at: gameRecord[0].updated_at
-            }
-            return game;
+            return new Game(
+                gameRecord[0].saveName,
+                gameRecord[0].id,
+                gameRecord[0].players = typeof gameRecord[0].players === 'string' ? JSON.parse(gameRecord[0].players) : gameRecord[0].players,
+                gameRecord[0].countries = typeof gameRecord[0].countries === 'string' ? JSON.parse(gameRecord[0].countries) : gameRecord[0].countries,
+                gameRecord[0].continents = typeof gameRecord[0].continents === 'string' ? JSON.parse(gameRecord[0].continents) : gameRecord[0].continents,
+                gameRecord[0].globeID,
+                gameRecord[0].turn,
+                gameRecord[0].phase,
+                gameRecord[0].activePlayerIndex
+            )
         }
 
     });

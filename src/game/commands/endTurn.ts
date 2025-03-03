@@ -8,9 +8,9 @@ function endOfDeployPhase(players: Player[]) {
         totalPlayerArmies += players[i].armies;
     }
     if (totalPlayerArmies === 0) {
-        return 'deploy'
-    } else {
         return 'play'
+    } else {
+        return 'deploy'
     }
 }
 

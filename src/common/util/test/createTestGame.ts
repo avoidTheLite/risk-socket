@@ -6,13 +6,13 @@ export default function createTestGame(playerCount: number) {
     const players: Player[] = createTestPlayers(playerCount);
     const globe: Globe = defaultGlobeSeed();
     return new Game(
+        'testGameID - autosave turn 1',
         'testGameID',
-        'testGameID - autosave turn 0',
         players,
         globe.countries,
         globe.continents,
         globe.id,
-        0,
+        1,
         'deploy',
         0
     );
