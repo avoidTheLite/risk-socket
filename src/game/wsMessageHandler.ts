@@ -22,7 +22,7 @@ export default async function wsMessageHandler(data: any) {
         return response
     case 'deploy' :
         game = await loadGame(data.saveName);
-        if (Number(game.players[game.activePlayerIndex].id) !== Number(data.playerID)) {
+        if (game.players[game.activePlayerIndex].id !== data.playerID) {
             throw new turnError({
                 message: `Not your turn. Active player = player ${game.activePlayerIndex}. Player ID = ${data.playerID}`
             })
