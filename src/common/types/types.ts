@@ -142,8 +142,9 @@ export enum LogLevel {
 export enum WsActions {
     NewGame = 'newGame',
     Echo = 'echo',
-    InvalidAction = 'invalidAction'
-    
+    InvalidAction = 'invalidAction',
+    Deploy = 'deploy',
+    EndTurn = 'endTurn',
 }
 export interface WsRequest {
     data: {

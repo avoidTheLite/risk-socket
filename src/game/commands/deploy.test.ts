@@ -18,6 +18,7 @@ describe('deploy', () => {
         let armiesDeployed = 2;
         let countryID = 10;
         game.countries[countryID].armies = 0
+        game.countries[countryID].ownerID = 0
         const savedGame = await deploy(game, countryID, armiesDeployed);
         expect(game.countries[countryID].armies).toBe(armiesDeployed);
         expect(game.players[game.activePlayerIndex].armies).toBe(playerArmies-armiesDeployed);

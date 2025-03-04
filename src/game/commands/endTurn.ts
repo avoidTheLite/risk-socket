@@ -22,7 +22,7 @@ export default async function endTurn(game: Game) {
             game.turn = 1;
         }
     }
-    game.activePlayerIndex = (game.turn) % game.players.length - 1;
+    game.activePlayerIndex = (game.turn - 1) % game.players.length;
     const turn: Turn = nextTurn(game.phase, game.activePlayerIndex, game.countries, game.continents);
     game.players[game.activePlayerIndex].armies += turn.armiesEarned;
     game = await saveGame(game);

@@ -8,11 +8,14 @@ export default async function deploy(game: Game, countryID: number, armies: numb
     }
     if (game.players[game.activePlayerIndex].armies < armies) {
         throw new deployError({ message: `Not enough armies. Player only has ${game.players[game.activePlayerIndex].armies}`});
-    } else {
+    } 
+    if (game.countries[countryID].ownerID !== game.activePlayerIndex) {
+        throw new deployError({ message: `Country does not belong to player ${game.activePlayerIndex}: ${game.players[game.activePlayerIndex].name}. It belongs to player ${game.countries[countryID].ownerID}: ${game.players[game.countries[countryID].ownerID].name}`});
+    }
     game.countries[countryID].armies += armies;
     game.players[game.activePlayerIndex].armies -= armies;
     const savedGame = await saveGame(game);
     return game
-    }
+    
 
 }
