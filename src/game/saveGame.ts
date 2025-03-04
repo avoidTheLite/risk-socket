@@ -19,13 +19,26 @@ export default async function saveGame(game: Game) {
         activePlayerIndex: game.activePlayerIndex,
     }
     try{
-        const result = await db('gameState').insert(gameRecord);
-        if (!result || result.length === 0) {
-            throw new dbInsertError({
-                message: 'Failed to insert game into database',
-            })
+        const saveExists = await db('gameState').where('saveName', '=', game.saveName).first();
+        console.log(`saveExists: ${saveExists}`)
+        if (saveExists) {
+            const result: number = await db('gameState').where({saveName: game.saveName}).update(gameRecord);
+            if (!result) {
+                throw new dbInsertError({
+                    message: 'Failed to update game in database',
+                })
+            }
+            savedGame = await loadGame(game.saveName);
+        } else {
+            const result: number[] = await db('gameState').insert(gameRecord);
+            if (!result || result.length === 0) {
+                throw new dbInsertError({
+                    message: 'Failed to insert game into database',
+                })
+            }
+            savedGame = await loadGame(game.saveName);
         }
-        savedGame = await loadGame(game.saveName);
+       
     }  
     catch (error) {
         throw new saveGameError({

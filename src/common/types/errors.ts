@@ -55,3 +55,23 @@ export class dbInsertError extends Error {
         this.name = args.name || 'Error';
     }
 }
+
+export class deployError extends Error {
+    name: string;
+
+    constructor(args: StandardErrorArgs) {
+        super(args.message);
+        Object.setPrototypeOf(this, new.target.prototype);
+        this.name = args.name || 'Error';
+    }
+}
+
+export class turnError extends Error {
+    name: string;
+
+    constructor(args: StandardErrorArgs) {
+        super(args.message);
+        Object.setPrototypeOf(this, new.target.prototype);
+        this.name = args.name || 'Error';
+    }
+}

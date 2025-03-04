@@ -11,7 +11,7 @@ describe('Calculate reinforcements - Unit Tests', () => {
         
         let game = createTestGame(4);
         for (let i = 0; i < 9; i++) {
-            game.countries[i].ownerID = '0';
+            game.countries[i].ownerID = 0;
         }
         
         const reinforcements = calculateReinforcements(0, game.countries, game.continents);
@@ -23,7 +23,7 @@ describe('Calculate reinforcements - Unit Tests', () => {
         const expectedReinforcements: number = 3
         let game = createTestGame(4);
         for (let i = 0; i < countriesOwned-1; i++) {
-            game.countries[2*i].ownerID = '0'; // skip countries to ensure player owns 0 continents
+            game.countries[2*i].ownerID = 0; // skip countries to ensure player owns 0 continents
         }
         const reinforcements = calculateReinforcements(0, game.countries, game.continents);
         expect(reinforcements).toBe(expectedReinforcements)

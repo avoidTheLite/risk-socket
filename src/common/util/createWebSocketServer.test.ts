@@ -89,7 +89,7 @@ describe('WebSocket Server', () => {
         })
 
         expect(JSON.parse(responseMessage).data.status).toEqual('failure');
-        expect(JSON.parse(responseMessage).data.message).toEqual('There was an error procesing your request');
+        expect(JSON.parse(responseMessage).data.message).toContain('There was an error procesing your request');
         client.close();
         await client.waitUntil('close');
     })

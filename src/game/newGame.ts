@@ -24,7 +24,7 @@ async function newGame(players: Player[], globeID: string) {
             countries: globe.countries,
             continents: globe.continents,
             globeID: globe.id,
-            turn: 0,
+            turn: 1,
             phase: 'deploy',
             activePlayerIndex: 0,    
         }

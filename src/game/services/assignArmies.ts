@@ -13,7 +13,7 @@ export default function assignArmies(players: Player[], countries: Country[], st
         players[i].armies = startingArmies;
     }
     for (let i = 0; i < countries.length; i++){
-        const ownerIndex: number = Number(countries[i].ownerID)
+        const ownerIndex: number = countries[i].ownerID
         players[ownerIndex].armies -= 1;
         countries[i].armies = 1
     }

@@ -1,18 +1,33 @@
 
-export interface Player {
-    id: string;
+export class Player {
+    id: number;
     name: string;
     color: string;
-    armies?: number;
+    armies: number;
     gameID?: string;
+
+    constructor(id: number, name: string, color: string, armies: number) {
+        this.id = id;
+        this.name = name;
+        this.color = color;
+        this.armies = armies;
+    }
 }
 
-export interface Globe {
+export class Globe {
     id: string;
     name: string;
     playerMax: number;
     countries: Country[];
     continents: Continent[];
+
+    constructor(id: string, name: string, playerMax: number, countries: Country[], continents: Continent[]) {
+        this.id = id;
+        this.name = name;
+        this.playerMax = playerMax;
+        this.countries = countries;
+        this.continents = continents;
+    }
 }
 
 export interface GlobeRecord {
@@ -24,25 +39,24 @@ export interface GlobeRecord {
 }
 
 export interface Country {
-    id: string;
+    id: number;
     name: string;
     continent: string;
-    connectedTo: string[];
-    ownerID?: string;
+    connectedTo: number[];
+    ownerID?: number;
     armies?: number;
 }
 
 export interface Continent {
-    id: string;
+    id: number;
     name: string;
-    countries: string[];
+    countries: number[];
     armies: number;
 }
 
-export interface Game {
+export class Game {
     saveName: string;
     id: string;
-    name?: string;
     players: Player[];
     countries: Country[];
     continents: Continent[];
@@ -50,8 +64,37 @@ export interface Game {
     turn: number;
     phase: Phase;
     activePlayerIndex: number;
+    name?: string;
     created_at?: string;
     updated_at?: string;
+
+    constructor(
+        saveName: string,
+        id: string,
+        players: Player[],
+        countries: Country[],
+        continents: Continent[],
+        globeID: string,
+        turn: number,
+        phase: Phase,
+        activePlayerIndex: number,
+        name?: string,
+        created_at?: string,
+        updated_at?: string
+    ){
+        this.saveName = saveName;
+        this.id = id;
+        this.players = players;
+        this.countries = countries;
+        this.continents = continents;
+        this.globeID = globeID;
+        this.turn = turn;
+        this.phase = phase;
+        this.activePlayerIndex = activePlayerIndex;
+        this.name = name;
+        this.created_at = created_at;
+        this.updated_at = updated_at;
+    }
 }
 
 export interface GameRecord {
@@ -99,8 +142,9 @@ export enum LogLevel {
 export enum WsActions {
     NewGame = 'newGame',
     Echo = 'echo',
-    InvalidAction = 'invalidAction'
-    
+    InvalidAction = 'invalidAction',
+    Deploy = 'deploy',
+    EndTurn = 'endTurn',
 }
 export interface WsRequest {
     data: {
@@ -109,6 +153,8 @@ export interface WsRequest {
         message: string;
         players?: Player[];
         globeID?: string;
+        saveName?: string;
+        playerID?: number;
     }
 }
 
@@ -117,5 +163,6 @@ export interface WsResponse {
         action: string;
         message: string;
         status: string;
+        gameState?: Game;
     }
 }

@@ -9,9 +9,9 @@ export default function assignCountries(players: Player[], countries: Country[])
     }
 
     for (let i = 0; i < countries.length; i++) {
-        let playerID: string = players[i % players.length].id
+        let playerID: number = players[i % players.length].id
         countries[i].ownerID = playerID
     }
-    countries.sort((a: Country, b: Country) => Number(a.id)-Number(b.id));
+    countries.sort((a: Country, b: Country) => a.id-b.id);
     return countries
 }
