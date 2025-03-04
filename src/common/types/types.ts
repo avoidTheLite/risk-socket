@@ -122,14 +122,19 @@ export interface Turn {
     armiesEarned: number;
 }
 export interface Engagement {
-    attackingCountry: string;
-    defendingCountry: string;
+    attackingCountry: number;
+    defendingCountry: number;
     attackingTroopCount: number;
-    defendingTroopCount: number;
+    defendingTroopCount?: number;
     attackersLost?: number;
     defendersLost?: number;
     attackerRolls?: number[];
     defenderRolls?: number[];
+}
+
+export interface Deployment {
+    countryID: number;
+    armies: number;
 }
 
 export enum LogLevel {
@@ -155,6 +160,8 @@ export interface WsRequest {
         globeID?: string;
         saveName?: string;
         playerID?: number;
+        deployment?: Deployment;
+        engagement?: Engagement;
     }
 }
 
@@ -163,6 +170,7 @@ export interface WsResponse {
         action: string;
         message: string;
         status: string;
+        engagement?: Engagement;
         gameState?: Game;
     }
 }

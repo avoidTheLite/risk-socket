@@ -1,9 +1,10 @@
 import deploy from "./commands/deploy";
 import newGame from "./newGame";
-import { Game, WsResponse } from "../common/types/types";
+import { Game, WsResponse, Engagement } from "../common/types/types";
 import loadGame from "./loadGame";
 import { turnError } from "../common/types/errors";
 import endTurn from "./commands/endTurn";
+import attack from "./commands/attack";
 
 export default async function wsMessageHandler(data: any) {
     let game: Game
@@ -54,6 +55,14 @@ export default async function wsMessageHandler(data: any) {
             }
         }
     case 'attack':
+        game = await loadGame(data.saveName);
+        if (game.players[game.activePlayerIndex].id !== data.playerID) {
+            throw new turnError({
+                message: `Not your turn. Active player = player ${game.activePlayerIndex}. Player ID = ${data.playerID}`
+            })
+        }
+        data.engagement.defendingTroopCount = game.countries[data.defendingCountryID].armies;
+        response = await attack(game, data.engagement);
     case 'move':
     case 'echo':
         response = {
