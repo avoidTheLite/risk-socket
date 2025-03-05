@@ -150,6 +150,7 @@ export enum WsActions {
     InvalidAction = 'invalidAction',
     Deploy = 'deploy',
     EndTurn = 'endTurn',
+    Attack = 'attack',
 }
 export interface WsRequest {
     data: {

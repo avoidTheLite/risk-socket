@@ -14,8 +14,16 @@ export default function rollCombat(engagement: Engagement): Engagement {
     let defenders: number;
     engagement.attackersLost = 0;
     engagement.defendersLost = 0;
-    if (engagement.attackingTroopCount > 3) attackers = 3;
-    if (engagement.defendingTroopCount > 2) defenders = 2;
+    if (engagement.attackingTroopCount > 3) {
+        attackers = 3;
+     } else {
+        attackers = engagement.attackingTroopCount;
+     }
+    if (engagement.defendingTroopCount > 2) {
+        defenders = 2;
+    } else {
+        defenders = engagement.defendingTroopCount;
+    }
 
     engagement.attackerRolls = roll(attackers);
     engagement.defenderRolls = roll(defenders);

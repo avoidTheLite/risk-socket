@@ -25,7 +25,7 @@ export default async function wsMessageHandler(data: any) {
         game = await loadGame(data.saveName);
         if (game.players[game.activePlayerIndex].id !== data.playerID) {
             throw new turnError({
-                message: `Not your turn. Active player = player ${game.activePlayerIndex}. Player ID = ${data.playerID}`
+                message: `Not your turn to deploy. Active player = player ${game.activePlayerIndex}. Player ID = ${data.playerID}`
             })
         }
         game = await deploy(game, data.countryID, data.armies);
@@ -40,9 +40,9 @@ export default async function wsMessageHandler(data: any) {
         return response
     case 'endTurn':
         game = await loadGame(data.saveName);
-        if (Number(game.players[game.activePlayerIndex].id) !== Number(data.playerID)) {
+        if (game.activePlayerIndex !== data.playerID) {
             throw new turnError({
-                message: `Not your turn. Active player = player ${game.activePlayerIndex}. Player ID = ${data.playerID}`
+                message: `Not your turn to end. Active player = player ${game.activePlayerIndex}. Player ID = ${data.playerID}`
             })
         }
         game = await endTurn(game);
@@ -54,15 +54,17 @@ export default async function wsMessageHandler(data: any) {
                 gameState: game
             }
         }
+        return response
     case 'attack':
         game = await loadGame(data.saveName);
         if (game.players[game.activePlayerIndex].id !== data.playerID) {
             throw new turnError({
-                message: `Not your turn. Active player = player ${game.activePlayerIndex}. Player ID = ${data.playerID}`
+                message: `Not your turn to attack. Active player = player ${game.activePlayerIndex}. Player ID = ${data.playerID}`
             })
         }
-        data.engagement.defendingTroopCount = game.countries[data.defendingCountryID].armies;
+        data.engagement.defendingTroopCount = game.countries[data.engagement.defendingCountry].armies;
         response = await attack(game, data.engagement);
+        return response
     case 'move':
     case 'echo':
         response = {

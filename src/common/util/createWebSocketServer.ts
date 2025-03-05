@@ -40,11 +40,11 @@ function createWebSocketServer(wsServer: Server) {
                     }
                     ws.send(JSON.stringify(response));
                 }
-            } catch (err) {
+            } catch (error) {
                 const response: WsResponse = {
                     data: {
                         action: parsedMessage.data.action,
-                        message: `There was an error procesing your request ${err}`,
+                        message: `There was an error procesing your request ${error}`,
                         status: "failure"
                     }
                 }
