@@ -91,6 +91,7 @@ export class Game {
         this.continents = continents;
         this.globeID = globeID;
         this.turn = turn;
+        this.turnTracker = turnTracker;
         this.phase = phase;
         this.activePlayerIndex = activePlayerIndex;
         this.name = name;
@@ -108,7 +109,7 @@ export interface GameRecord {
     continents: string;
     globeID: string;
     turn: number;
-    turnTracker: TurnTracker;
+    turnTracker: string;
     phase: Phase;
     activePlayerIndex: number;
     created_at?: string;
