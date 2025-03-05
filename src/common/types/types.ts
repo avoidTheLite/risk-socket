@@ -62,6 +62,7 @@ export class Game {
     continents: Continent[];
     globeID: string;
     turn: number;
+    turnTracker: TurnTracker;
     phase: Phase;
     activePlayerIndex: number;
     name?: string;
@@ -76,6 +77,7 @@ export class Game {
         continents: Continent[],
         globeID: string,
         turn: number,
+        turnTracker: TurnTracker,
         phase: Phase,
         activePlayerIndex: number,
         name?: string,
@@ -106,6 +108,7 @@ export interface GameRecord {
     continents: string;
     globeID: string;
     turn: number;
+    turnTracker: TurnTracker;
     phase: Phase;
     activePlayerIndex: number;
     created_at?: string;
@@ -116,7 +119,7 @@ export type Phase = "deploy" | "play" | "end";
 
 export type TurnPhase = "start" | "deploy" | "combat" | "move" | "card";
 
-export interface Turn {
+export interface TurnTracker {
     phase: TurnPhase;
     earnedCard: boolean;
     armiesEarned: number;

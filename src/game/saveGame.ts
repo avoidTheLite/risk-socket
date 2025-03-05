@@ -15,6 +15,7 @@ export default async function saveGame(game: Game) {
         continents: JSON.stringify(game.continents),
         globeID: game.globeID,
         turn: game.turn,
+        turnTracker: game.turnTracker,
         phase: game.phase,
         activePlayerIndex: game.activePlayerIndex,
     }

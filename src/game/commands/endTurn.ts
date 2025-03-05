@@ -1,4 +1,4 @@
-import { Game, Player, Turn } from "../../common/types/types";
+import { Game, Player, TurnTracker } from "../../common/types/types";
 import saveGame from "../saveGame";
 import nextTurn from "../../game/services/nextTurn";
 import { saveGameError, turnError } from "../../common/types/errors";
@@ -25,8 +25,8 @@ export default async function endTurn(game: Game) {
             }
         }
         game.activePlayerIndex = (game.turn - 1) % game.players.length;
-        const turn: Turn = nextTurn(game.phase, game.activePlayerIndex, game.countries, game.continents);
-        game.players[game.activePlayerIndex].armies += turn.armiesEarned;
+        const turnTracker: TurnTracker = nextTurn(game.phase, game.activePlayerIndex, game.countries, game.continents);
+        game.players[game.activePlayerIndex].armies += turnTracker.armiesEarned;
     } catch (error) {
         throw new turnError({ message: `Failed to end turn ${error}` })
     }

@@ -1,24 +1,24 @@
-import { Turn, Phase, Country, Continent } from '../../common/types/types';
+import { TurnTracker, Phase, Country, Continent } from '../../common/types/types';
 import calculateReinforcements from './calculateReinforcements';
 
 
-export default function nextTurn(gamePhase: Phase, activePlayerIndex: number,  countries: Country[], continents: Continent[]): Turn {
+export default function nextTurn(gamePhase: Phase, activePlayerIndex: number,  countries: Country[], continents: Continent[]): TurnTracker {
     if (gamePhase === 'play') {
         const reinforcements: number = calculateReinforcements(activePlayerIndex, countries, continents);
-        const turn: Turn = {
+        const turnTracker: TurnTracker = {
             phase: 'deploy',
             earnedCard: false,
             armiesEarned: reinforcements,
         }
-        return turn
+        return turnTracker
     } 
     else if (gamePhase === 'deploy') {
-            const turn: Turn = {
+            const turnTracker: TurnTracker = {
                 phase: 'deploy',
                 earnedCard: false,
                 armiesEarned: 0,
             }
-        return turn
+        return turnTracker
         }
     
     
