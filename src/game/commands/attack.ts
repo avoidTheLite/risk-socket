@@ -3,6 +3,11 @@ import { Game, Engagement, WsResponse } from "../../common/types/types";
 import { attackError } from "../../common/types/errors";
 import saveGame from "../saveGame";
 
+export function combatResult(game: Game, engagement: Engagement): Game {
+    game.countries[engagement.attackingCountry].armies -= engagement.attackersLost;
+    game.countries[engagement.defendingCountry].armies -= engagement.defendersLost;
+    return game
+}
 export default async function attack(game: Game, engagement: Engagement): Promise<WsResponse> {
     if (game.phase !== 'play') {
         throw new attackError({ message: 'Not in play phase'});
@@ -18,8 +23,7 @@ export default async function attack(game: Game, engagement: Engagement): Promis
     }
     
     engagement = rollCombat(engagement);
-    game.countries[engagement.attackingCountry].armies -= engagement.attackersLost;
-    game.countries[engagement.defendingCountry].armies -= engagement.defendersLost;
+    game = combatResult(game, engagement);
     game = await saveGame(game);
     const response = {
         data: {
