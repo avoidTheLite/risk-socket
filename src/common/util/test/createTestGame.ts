@@ -13,6 +13,11 @@ export default function createTestGame(playerCount: number) {
         globe.continents,
         globe.id,
         1,
+        {
+            phase: 'deploy',
+            earnedCard: false,
+            armiesEarned: 0,
+        },
         'deploy',
         0
     );

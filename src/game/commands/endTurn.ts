@@ -1,6 +1,7 @@
-import { Game, Player, Turn } from "../../common/types/types";
+import { Game, Player } from "../../common/types/types";
 import saveGame from "../saveGame";
 import nextTurn from "../../game/services/nextTurn";
+import { saveGameError, turnError } from "../../common/types/errors";
 
 function endOfDeployPhase(players: Player[]) {
     let totalPlayerArmies: number = 0;
@@ -15,16 +16,24 @@ function endOfDeployPhase(players: Player[]) {
 }
 
 export default async function endTurn(game: Game) {
-    game.turn += 1;
-    if (game.phase === 'deploy') {
-        game.phase = endOfDeployPhase(game.players);
-        if (game.phase === 'play') {
-            game.turn = 1;
+    try{
+        game.turn += 1;
+        if (game.phase === 'deploy') {
+            game.phase = endOfDeployPhase(game.players);
+            if (game.phase === 'play') {
+                game.turn = 1;
+            }
         }
+        game.activePlayerIndex = (game.turn - 1) % game.players.length;
+        game.turnTracker = nextTurn(game.phase, game.activePlayerIndex, game.countries, game.continents);
+        game.players[game.activePlayerIndex].armies += game.turnTracker.armiesEarned;
+    } catch (error) {
+        throw new turnError({ message: `Failed to end turn ${error}` })
     }
-    game.activePlayerIndex = (game.turn - 1) % game.players.length;
-    const turn: Turn = nextTurn(game.phase, game.activePlayerIndex, game.countries, game.continents);
-    game.players[game.activePlayerIndex].armies += turn.armiesEarned;
-    game = await saveGame(game);
+    try {
+        game = await saveGame(game);
+    } catch (error) {
+        throw new saveGameError({ message: `Failed to save game ${error}` })
+    }
     return game
 }

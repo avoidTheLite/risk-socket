@@ -25,6 +25,11 @@ async function newGame(players: Player[], globeID: string) {
             continents: globe.continents,
             globeID: globe.id,
             turn: 1,
+            turnTracker: {
+                phase: 'deploy',
+                earnedCard: false,
+                armiesEarned: 0
+            },
             phase: 'deploy',
             activePlayerIndex: 0,    
         }

@@ -16,6 +16,11 @@ export async function seed(knex: Knex): Promise<void> {
         continents: JSON.stringify(globe.continents),
         globeID: globe.id,
         turn: 0,
+        turnTracker: JSON.stringify({
+            phase: 'deploy',
+            earnedCard: false,
+            armiesEarned: 0,
+        }),
         phase: 'deploy',
         activePlayerIndex: 0
     }

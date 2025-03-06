@@ -62,6 +62,7 @@ export class Game {
     continents: Continent[];
     globeID: string;
     turn: number;
+    turnTracker: TurnTracker;
     phase: Phase;
     activePlayerIndex: number;
     name?: string;
@@ -76,6 +77,7 @@ export class Game {
         continents: Continent[],
         globeID: string,
         turn: number,
+        turnTracker: TurnTracker,
         phase: Phase,
         activePlayerIndex: number,
         name?: string,
@@ -89,6 +91,7 @@ export class Game {
         this.continents = continents;
         this.globeID = globeID;
         this.turn = turn;
+        this.turnTracker = turnTracker;
         this.phase = phase;
         this.activePlayerIndex = activePlayerIndex;
         this.name = name;
@@ -106,6 +109,7 @@ export interface GameRecord {
     continents: string;
     globeID: string;
     turn: number;
+    turnTracker: string;
     phase: Phase;
     activePlayerIndex: number;
     created_at?: string;
@@ -116,20 +120,25 @@ export type Phase = "deploy" | "play" | "end";
 
 export type TurnPhase = "start" | "deploy" | "combat" | "move" | "card";
 
-export interface Turn {
+export interface TurnTracker {
     phase: TurnPhase;
     earnedCard: boolean;
     armiesEarned: number;
 }
 export interface Engagement {
-    attackingCountry: string;
-    defendingCountry: string;
+    attackingCountry: number;
+    defendingCountry: number;
     attackingTroopCount: number;
-    defendingTroopCount: number;
+    defendingTroopCount?: number;
     attackersLost?: number;
     defendersLost?: number;
     attackerRolls?: number[];
     defenderRolls?: number[];
+}
+
+export interface Deployment {
+    countryID: number;
+    armies: number;
 }
 
 export enum LogLevel {
@@ -145,6 +154,7 @@ export enum WsActions {
     InvalidAction = 'invalidAction',
     Deploy = 'deploy',
     EndTurn = 'endTurn',
+    Attack = 'attack',
 }
 export interface WsRequest {
     data: {
@@ -155,6 +165,8 @@ export interface WsRequest {
         globeID?: string;
         saveName?: string;
         playerID?: number;
+        deployment?: Deployment;
+        engagement?: Engagement;
     }
 }
 
@@ -163,6 +175,7 @@ export interface WsResponse {
         action: string;
         message: string;
         status: string;
+        engagement?: Engagement;
         gameState?: Game;
     }
 }

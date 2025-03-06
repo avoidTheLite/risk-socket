@@ -78,12 +78,13 @@ ws://localhost:8080/
     "data": {
         "action": "newGame",
         "message": "",
-        "players": [{
-            "id": "0",
+        "players": [
+            {
+            "id": 0,
             "name": "Your name here",
             "color": "red"
         },{
-            "id": "1",
+            "id": 1,
             "name": "Your Friend/enemy Name here",
             "color": "blue" 
         }
@@ -98,31 +99,75 @@ Expected response for success:
 {
     "data": {
         "action": "newGame",
-        "message": {
-            "saveName": "jfh7q8qS6d - autosave turn 0",
-            "id": "jfh7q8qS6d",
-            "name": null,
+        "message": "New game created with save name: cG9XFr3pBy - autosave turn 1 for 2 players",
+        "status": "success",
+        "gameState": {
+            "saveName": "cG9XFr3pBy - autosave turn 1",
+            "id": "cG9XFr3pBy",
             "players": [
                 {
-                    "id": "0",
+                    "id": 0,
                     "name": "Your name here",
-                    "color": "red"
+                    "color": "red",
+                    "armies": 19
                 },
                 {
-                    "id": "1",
+                    "id": 1,
                     "name": "Your Friend/enemy Name here",
-                    "color": "blue"
+                    "color": "blue",
+                    "armies": 19
                 }
             ],
-            "countries": ['Array of country objects, truncated for brevity],
+            "countries": ['Array of country objects, truncated for brevity'],
             "continents": ['Array of continent objects, truncated for brevity'],
             "globeID": "defaultGlobeID",
-            "turn": 0,
+            "turn": 1,
             "phase": "deploy",
-            "created_at": "2025-02-24T17:04:46.694Z",
-            "updated_at": "2025-02-24T17:04:46.694Z"
+            "activePlayerIndex": 0
+        }
+    }
+}
+```
+
+4) Players can deploy troops using:
+```JSON
+{
+    "data": {
+        "action": "deploy",
+        "message": "",
+        "countryID": 0,
+        "armies": 19,
+        "playerID": 0,
+        "saveName": "cG9XFr3pBy - autosave turn 1"
+    }
+}
+```
+
+5) Players can end their turn using:
+```JSON
+{
+    "data": {
+        "action": "endTurn",
+        "message": "",
+        "playerID": 1,
+        "saveName": "cG9XFr3pBy - autosave turn 1"
+    }
+}
+```
+
+6) Players can attack using:
+```JSON
+{
+    "data": {
+        "action": "attack",
+        "message": "",
+        "playerID": 0,
+        "engagement": {
+            "attackingCountry": 1,
+            "defendingCountry": 0,
+            "attackingTroopCount": 3
         },
-        "status": "success"
+        "saveName": "cG9XFr3pBy - autosave turn 1"
     }
 }
 ```
