@@ -12,6 +12,9 @@ export default async function attack(game: Game, engagement: Engagement): Promis
     if (game.phase !== 'play') {
         throw new attackError({ message: 'Not in play phase'});
     }
+    if (game.turnTracker.phase !== 'combat') {
+        throw new attackError({ message: 'Not in combat phase of your turn'});
+    }
     if (game.countries[engagement.attackingCountry].armies <= engagement.attackingTroopCount) {
         throw new attackError({ message: 'Not enough armies to attack'});
     }

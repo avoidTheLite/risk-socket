@@ -52,4 +52,15 @@ describe('deploy', () => {
 
         await expect(deploy(game, countryID, armiesDeployed)).rejects.toThrow(deployError);
     })
+
+    test('should set turnPhase to combat if player has no more armies', async () => {
+        game.phase = 'play'
+        game.players[game.activePlayerIndex].armies = 2
+        let armiesDeployed = 2;
+        let countryID = 10;
+        game.countries[countryID].armies = 0
+        game.countries[countryID].ownerID = 0
+        const savedGame = await deploy(game, countryID, armiesDeployed);
+        expect(game.turnTracker.phase).toBe('combat');
+    })
 })

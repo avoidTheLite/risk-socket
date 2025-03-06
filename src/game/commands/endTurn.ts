@@ -25,8 +25,8 @@ export default async function endTurn(game: Game) {
             }
         }
         game.activePlayerIndex = (game.turn - 1) % game.players.length;
-        const turnTracker: TurnTracker = nextTurn(game.phase, game.activePlayerIndex, game.countries, game.continents);
-        game.players[game.activePlayerIndex].armies += turnTracker.armiesEarned;
+        game.turnTracker = nextTurn(game.phase, game.activePlayerIndex, game.countries, game.continents);
+        game.players[game.activePlayerIndex].armies += game.turnTracker.armiesEarned;
     } catch (error) {
         throw new turnError({ message: `Failed to end turn ${error}` })
     }

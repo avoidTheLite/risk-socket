@@ -46,6 +46,21 @@ describe('attack - Unit tests', () => {
         await expect(attack(game, engagement)).rejects.toThrow(attackError);
     })
 
+    test('should throw an error if not in combat phase', async () => {
+        game.phase = 'play';
+        game.turnTracker.phase = 'deploy';
+        const engagement: Engagement = {
+            attackingCountry: 0,
+            defendingCountry: 1,
+            attackingTroopCount: 3,
+            defendingTroopCount: 2
+        }
+        game.countries[engagement.attackingCountry].armies = 5
+        game.countries[engagement.defendingCountry].armies = 5;
+        game.countries[engagement.attackingCountry].ownerID = 0;
+        game.countries[engagement.defendingCountry].ownerID = 1;
+        await expect(attack(game, engagement)).rejects.toThrow(attackError);
+    })
     test('should throw an error if not enough armies to attack', async () => {
         game.phase = 'play';
         const engagement: Engagement = {
@@ -100,6 +115,7 @@ describe('attack - Integration tests', () => {
 
     test('Attack works and returns a valid response object with 2 armies lost', async () => {
         game.phase = 'play';
+        game.turnTracker.phase = 'combat';
         const engagement: Engagement = {
             attackingCountry: 0,
             defendingCountry: 1,
