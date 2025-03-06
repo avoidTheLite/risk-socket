@@ -3,7 +3,6 @@ import { describe, test, expect, beforeEach } from '@jest/globals';
 import createTestGame from "../../common/util/test/createTestGame";
 import { Engagement, Game } from "../../common/types/types";
 import { attackError } from "../../common/types/errors";
-import newGame from "../newGame";
 
 
 describe('attack - Unit tests', () => {
