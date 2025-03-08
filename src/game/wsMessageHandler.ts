@@ -11,10 +11,11 @@ export default async function wsMessageHandler(data: any) {
     let response: WsResponse
     switch(data.action) {       
     case 'newGame':
-        game = await newGame(data.players, data.globeID);
+        game = await newGame(data.players, data.globeID, data.randomAssignment);
         response= {
             data: {
                 action: data.action,
+                randomAssignment: data.randomAssignment,
                 message: `New game created with save name: ${game.saveName} for ${data.players.length} players`,
                 status: "success",
                 gameState: game

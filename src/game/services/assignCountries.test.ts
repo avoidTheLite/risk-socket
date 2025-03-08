@@ -38,4 +38,29 @@ describe('assign countries to 4 players', () => {
         }
         expect(invalidAssignment).toBe(false)
     })
+
+    test('When randomAssignment is false, countries are assigned in order', () => {
+        const playerCount: number = 4
+        const players: Player[] = createTestPlayers(playerCount);
+        let countries: Country[] = defaultCountrySeed();
+        countries = assignCountries(players, countries, false)
+        let countryOwnerIDs: number[] = [];
+        for (let i = 0; i < countries.length; i++) {
+            countryOwnerIDs.push(Number(countries[i].ownerID))
+        }
+        expect(countryOwnerIDs).toEqual([0, 1, 2, 3, 0, 1, 2, 3, 0, 1, 2, 3, 0, 1, 2, 3, 0, 1, 2, 3, 0, 1, 2, 3, 0, 1, 2, 3, 0, 1, 2, 3, 0, 1, 2, 3, 0, 1, 2, 3, 0, 1])
+    })
+
+    test('When randomAssignment is true, countries are assigned randomly', () => {
+        const playerCount: number = 4
+        const players: Player[] = createTestPlayers(playerCount);
+        let countries: Country[] = defaultCountrySeed();
+        countries = assignCountries(players, countries, true)
+        let countryOwnerIDs: number[] = [];
+        for (let i = 0; i < countries.length; i++) {
+            countryOwnerIDs.push(Number(countries[i].ownerID))
+        }
+        expect(countryOwnerIDs).not.toEqual([0, 1, 2, 3, 0, 1, 2, 3, 0, 1, 2, 3, 0, 1, 2, 3, 0, 1, 2, 3, 0, 1, 2, 3, 0, 1, 2, 3, 0, 1, 2, 3, 0, 1, 2, 3, 0, 1, 2, 3, 0, 1])
+
+    })
 }) 

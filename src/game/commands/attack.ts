@@ -24,6 +24,9 @@ export default async function attack(game: Game, engagement: Engagement): Promis
     if (game.countries[engagement.defendingCountry].ownerID === game.activePlayerIndex) {
         throw new attackError({ message: `Player ${game.activePlayerIndex} is the owner of ${game.countries[engagement.defendingCountry].name}. You cannot attack your own country`});
     }
+    if (!game.countries[engagement.attackingCountry].connectedTo.includes(engagement.defendingCountry)) {
+        throw new attackError({ message: `Countries ${game.countries[engagement.attackingCountry].name} and ${game.countries[engagement.defendingCountry].name} are not connected`});
+    }
     
     engagement = rollCombat(engagement);
     game = combatResult(game, engagement);

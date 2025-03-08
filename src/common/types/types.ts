@@ -167,6 +167,7 @@ export interface WsRequest {
         playerID?: number;
         deployment?: Deployment;
         engagement?: Engagement;
+        randomAssignment?: boolean;
     }
 }
 
@@ -177,5 +178,6 @@ export interface WsResponse {
         status: string;
         engagement?: Engagement;
         gameState?: Game;
+        randomAssignment?: boolean;
     }
 }
