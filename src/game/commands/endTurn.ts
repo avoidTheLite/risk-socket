@@ -1,4 +1,4 @@
-import { Game, Player } from "../../common/types/types";
+import { Game, Player, Card } from "../../common/types/types";
 import saveGame from "../saveGame";
 import nextTurn from "../../game/services/nextTurn";
 import { saveGameError, turnError } from "../../common/types/errors";
@@ -15,6 +15,11 @@ function endOfDeployPhase(players: Player[]) {
     }
 }
 
+function drawCard(cardsAvailable: Card[]): Card {
+    const selectedCard: Card = cardsAvailable[Math.floor(Math.random() * cardsAvailable.length)];
+    return selectedCard
+}
+
 export default async function endTurn(game: Game) {
     try{
         game.turn += 1;
@@ -22,6 +27,12 @@ export default async function endTurn(game: Game) {
             game.phase = endOfDeployPhase(game.players);
             if (game.phase === 'play') {
                 game.turn = 1;
+            }
+        } else if (game.phase === 'play') {
+            if (game.turnTracker.earnedCard) {
+                const card = drawCard(game.cardsAvailable)
+                game.players[game.activePlayerIndex].cards.push(card);
+                game.cardsAvailable.splice(game.cardsAvailable.indexOf(card), 1); 
             }
         }
         game.activePlayerIndex = (game.turn - 1) % game.players.length;
