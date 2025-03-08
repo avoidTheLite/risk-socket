@@ -1,13 +1,13 @@
 import { Country, Player } from "../../common/types/types";
 
-export default function assignCountries(players: Player[], countries: Country[]) {
+export default function assignCountries(players: Player[], countries: Country[], randomAssignment?: boolean) {
     //Fisher-yates shuffle
-    let randomOrder: Array<number> = []
-    for (let i = countries.length-1; i > 0; i--) {
-        let j: number = Math.floor(Math.random()*(i+1));
-        [countries[i], countries[j]] = [countries[j], countries[i]]
+    if (randomAssignment) {
+        for (let i = countries.length-1; i > 0; i--) {
+            let j: number = Math.floor(Math.random()*(i+1));
+            [countries[i], countries[j]] = [countries[j], countries[i]]
+        }
     }
-
     for (let i = 0; i < countries.length; i++) {
         let playerID: number = players[i % players.length].id
         countries[i].ownerID = playerID

@@ -8,7 +8,7 @@ import assignArmies from './services/assignArmies';
 
 let uid = new ShortUniqueId({ length: 10 });
 
-async function newGame(players: Player[], globeID: string) {
+async function newGame(players: Player[], globeID: string, randomAssignment?: boolean) {
     try {
         console.log(`loading game with globe ID ${globeID}`)
         let globe: Globe = await loadGlobe(globeID);
@@ -34,7 +34,7 @@ async function newGame(players: Player[], globeID: string) {
             activePlayerIndex: 0,    
         }
         game.saveName = game.id + ' - autosave turn ' + game.turn;
-        game.countries = await assignCountries(players, globe.countries)
+        game.countries = await assignCountries(players, globe.countries, randomAssignment)
         game.players = await assignArmies(players, globe.countries)
         game = await saveGame(game) 
         console.log(`New game created: ${game.id} with save name: ${game.saveName}`)

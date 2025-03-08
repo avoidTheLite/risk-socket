@@ -104,6 +104,21 @@ describe('attack - Unit tests', () => {
         game.countries[engagement.defendingCountry].ownerID = 0;
         await expect(attack(game, engagement)).rejects.toThrow(attackError);
     })
+
+    test('should throw an error if countries are not connected', async () => {
+        game.phase = 'play';
+        const engagement: Engagement = {
+            attackingCountry: 0,
+            defendingCountry: 2,
+            attackingTroopCount: 3,
+            defendingTroopCount: 2
+        }
+        game.countries[engagement.attackingCountry].armies = 5
+        game.countries[engagement.defendingCountry].armies = 5;
+        game.countries[engagement.attackingCountry].ownerID = 0;
+        game.countries[engagement.defendingCountry].ownerID = 1;
+        await expect(attack(game, engagement)).rejects.toThrow(attackError);
+    })
 })
 
 describe('attack - Integration tests', () => {
