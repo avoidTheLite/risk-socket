@@ -1,10 +1,11 @@
-import { Game, Player, Globe } from '../common/types/types';
+import { Game, Player, Globe, Card } from '../common/types/types';
 import ShortUniqueId = require('short-unique-id');
 import { playerCountError } from '../common/types/errors';
 import saveGame from './saveGame';
 import loadGlobe from './loadGlobe';
 import assignCountries from './services/assignCountries';
 import assignArmies from './services/assignArmies';
+import defaultCardSeed from '../common/util/test/defaultCardSeed';
 
 let uid = new ShortUniqueId({ length: 10 });
 
@@ -12,6 +13,7 @@ async function newGame(players: Player[], globeID: string, randomAssignment?: bo
     try {
         console.log(`loading game with globe ID ${globeID}`)
         let globe: Globe = await loadGlobe(globeID);
+        let cards: Card[] = defaultCardSeed();
         if (players.length > globe.playerMax) {
             throw new playerCountError({
                 message:`Globe supports up to ${globe.playerMax} players, but ${players.length} players were provided`
@@ -31,7 +33,9 @@ async function newGame(players: Player[], globeID: string, randomAssignment?: bo
                 armiesEarned: 0
             },
             phase: 'deploy',
-            activePlayerIndex: 0,    
+            activePlayerIndex: 0,
+            cardsAvailable: cards,
+            matches: 0    
         }
         game.saveName = game.id + ' - autosave turn ' + game.turn;
         game.countries = await assignCountries(players, globe.countries, randomAssignment)

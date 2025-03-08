@@ -59,4 +59,27 @@ describe('endTurn', () => {
         expect(game.turn).toBe(5);
         expect(game.activePlayerIndex).toBe(0);
     })
+
+    test('Card is drawn and added to player and removed from cardsAvailable', async () => {
+        let game: Game = createTestGame(4);
+        game.phase = 'play';
+        game.activePlayerIndex = 0;
+        game.turn = 1;
+        game.turnTracker.earnedCard = true;
+        game = await endTurn(game);
+        expect(game.players[0].cards.length).toBe(1);
+        expect(game.cardsAvailable.length).toBe(43);
+    })
+
+    test('No card is drawn if turnTracker.cardEarned is false', async () => {
+        let game: Game = createTestGame(4);
+        game.players[0].cards = [];
+        game.phase = 'play';
+        game.activePlayerIndex = 0;
+        game.turn = 1;
+        game.turnTracker.earnedCard = false;
+        game = await endTurn(game);
+        expect(game.players[0].cards.length).toBe(0);
+        expect(game.cardsAvailable.length).toBe(44);
+    })
 })

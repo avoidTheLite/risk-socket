@@ -15,6 +15,8 @@ export default async function loadGame(saveName: string): Promise<Game> {
         "gameState.turnTracker",
         "gameState.phase",
         "gameState.activePlayerIndex",
+        "gameState.cardsAvailable",
+        "gameState.matches",
         "gameState.created_at",
         "gameState.updated_at"
     ).from('gameState')
@@ -36,7 +38,9 @@ export default async function loadGame(saveName: string): Promise<Game> {
                 gameRecord[0].turn,
                 gameRecord[0].turnTracker = typeof gameRecord[0].turnTracker === 'string' ? JSON.parse(gameRecord[0].turnTracker) : gameRecord[0].turnTracker,
                 gameRecord[0].phase,
-                gameRecord[0].activePlayerIndex
+                gameRecord[0].activePlayerIndex,
+                gameRecord[0].cardsAvailable = typeof gameRecord[0].cardsAvailable === 'string' ? JSON.parse(gameRecord[0].cardsAvailable) : gameRecord[0].cardsAvailable,
+                gameRecord[0].matches,
             )
         }
 

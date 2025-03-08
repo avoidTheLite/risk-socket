@@ -5,12 +5,14 @@ export class Player {
     color: string;
     armies: number;
     gameID?: string;
+    cards?: Card[];
 
-    constructor(id: number, name: string, color: string, armies: number) {
+    constructor(id: number, name: string, color: string, armies: number, cards?: Card[]) {
         this.id = id;
         this.name = name;
         this.color = color;
         this.armies = armies;
+        this.cards = cards;
     }
 }
 
@@ -47,6 +49,11 @@ export interface Country {
     armies?: number;
 }
 
+export interface Card {
+    id: number;
+    name: string;
+    symbol: "infantry" | "cavalry" | "artillery" | "wildcard";
+}
 export interface Continent {
     id: number;
     name: string;
@@ -65,6 +72,8 @@ export class Game {
     turnTracker: TurnTracker;
     phase: Phase;
     activePlayerIndex: number;
+    cardsAvailable: Card[];
+    matches?: number;
     name?: string;
     created_at?: string;
     updated_at?: string;
@@ -80,6 +89,8 @@ export class Game {
         turnTracker: TurnTracker,
         phase: Phase,
         activePlayerIndex: number,
+        cardsAvailable: Card[],
+        matches?: number,
         name?: string,
         created_at?: string,
         updated_at?: string
@@ -94,6 +105,8 @@ export class Game {
         this.turnTracker = turnTracker;
         this.phase = phase;
         this.activePlayerIndex = activePlayerIndex;
+        this.cardsAvailable = cardsAvailable;
+        this.matches = matches;
         this.name = name;
         this.created_at = created_at;
         this.updated_at = updated_at;
@@ -112,6 +125,8 @@ export interface GameRecord {
     turnTracker: string;
     phase: Phase;
     activePlayerIndex: number;
+    cardsAvailable: string;
+    matches: number;
     created_at?: string;
     updated_at?: string;
 }
@@ -155,6 +170,7 @@ export enum WsActions {
     Deploy = 'deploy',
     EndTurn = 'endTurn',
     Attack = 'attack',
+    CardMatch = 'cardMatch',
 }
 export interface WsRequest {
     data: {
@@ -168,6 +184,7 @@ export interface WsRequest {
         deployment?: Deployment;
         engagement?: Engagement;
         randomAssignment?: boolean;
+        cards?: Card[];
     }
 }
 
@@ -179,5 +196,6 @@ export interface WsResponse {
         engagement?: Engagement;
         gameState?: Game;
         randomAssignment?: boolean;
+        cards?: Card[];
     }
 }

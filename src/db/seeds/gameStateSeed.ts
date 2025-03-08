@@ -2,11 +2,13 @@ import { Knex } from "knex";
 import { defaultGlobeSeed } from "../../common/util/test/defaultGlobeSeed";
 import createTestPlayers from "../../common/util/test/createTestPlayers";
 import { GameRecord } from "../../common/types/types";
+import defaultCardSeed from "../../common/util/test/defaultCardSeed";
 
 export async function seed(knex: Knex): Promise<void> {
     await knex('gameState').del();
     const globe = defaultGlobeSeed();
     const players = createTestPlayers(4);
+    const cards = defaultCardSeed
     const game: GameRecord = {
         saveName: 'defaultGameID - autosave turn 0',
         id: 'defaultGameID',
@@ -22,7 +24,9 @@ export async function seed(knex: Knex): Promise<void> {
             armiesEarned: 0,
         }),
         phase: 'deploy',
-        activePlayerIndex: 0
+        activePlayerIndex: 0,
+        cardsAvailable: JSON.stringify(cards),
+        matches: 0
     }
 
     await knex('gameState').insert(game) 
