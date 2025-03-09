@@ -6,6 +6,7 @@ import { turnError } from "../common/types/errors";
 import endTurn from "./commands/endTurn";
 import attack from "./commands/attack";
 import cardMatch from "./commands/cardMatch";
+import conquer from "./commands/conquer";
 
 export default async function wsMessageHandler(data: any) {
     let game: Game
@@ -75,6 +76,15 @@ export default async function wsMessageHandler(data: any) {
             })
         }
         response = await cardMatch(game, data.cards);
+        return response
+    case 'conquer':
+        game = await loadGame(data.saveName);
+        if (game.players[game.activePlayerIndex].id !== data.playerID) {
+            throw new turnError({
+                message: `Not your turn to conquer. Active player = player ${game.activePlayerIndex}. Player ID = ${data.playerID}`
+            })
+        }
+        response = await conquer(game, data.engagement);
         return response
     case 'move':
     case 'echo':
