@@ -321,4 +321,46 @@ describe('Websocket end to end flow tests', () => {
         expect(game.countries[5].ownerID).toEqual(0);
 
     });
+
+    test('Move - Player 1: Alaska to Kamchatka', async () => {
+        const testMessage: WsRequest = {
+            data: {
+                action: 'move' as WsActions,
+                message: 'This is the Client test message',
+                playerID: 0,
+                movement: {
+                    targetCountry: 5,
+                    sourceCountry: 0,
+                    armies: 2,
+                },
+                saveName: game.saveName
+            }
+        }
+        const responseMessage: string = await new Promise ((resolve) => {
+            client.addEventListener('message', ({data}) => resolve(data.toString('utf-8')), {once: true});
+            client.send(JSON.stringify(testMessage));
+        })
+        game = JSON.parse(responseMessage).data.gameState;
+        expect(JSON.parse(responseMessage).data.status).toEqual('success');
+        expect(game.countries[5].armies).toEqual(7);
+    })
+
+    test('end turn - Player 0', async () => {
+        const testMessage = {
+            data: {
+                action: 'endTurn',
+                playerID: 0,
+                saveName: game.saveName
+            }
+        }
+        const responseMessage: string = await new Promise ((resolve) => {
+            client.addEventListener('message', ({data}) => resolve(data.toString('utf-8')), {once: true});
+            client.send(JSON.stringify(testMessage));
+        })
+        game = JSON.parse(responseMessage).data.gameState;
+        expect(JSON.parse(responseMessage).data.status).toEqual('success');
+        expect(game.activePlayerIndex).toEqual(1);
+        expect(game.players[0].cards.length).toEqual(1);
+    });
+
 })

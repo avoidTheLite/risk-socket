@@ -133,7 +133,7 @@ export interface GameRecord {
 
 export type Phase = "deploy" | "play" | "end";
 
-export type TurnPhase = "start" | "deploy" | "combat" | "conquer" | "move" | "card";
+export type TurnPhase = "start" | "deploy" | "combat" | "conquer" | "move" | "end";
 
 export interface TurnTracker {
     phase: TurnPhase;
@@ -153,7 +153,13 @@ export interface Engagement {
 }
 
 export interface Deployment {
-    countryID: number;
+    targetCountry: number;
+    armies: number;
+}
+
+export interface Movement {
+    targetCountry: number;
+    sourceCountry: number;
     armies: number;
 }
 
@@ -173,6 +179,7 @@ export enum WsActions {
     Attack = 'attack',
     CardMatch = 'cardMatch',
     Conquer = 'conquer',
+    Move = 'move',
 }
 export interface WsRequest {
     data: {
@@ -184,6 +191,7 @@ export interface WsRequest {
         saveName?: string;
         playerID?: number;
         deployment?: Deployment;
+        movement?: Movement;
         engagement?: Engagement;
         randomAssignment?: boolean;
         cards?: Card[];
@@ -196,6 +204,7 @@ export interface WsResponse {
         message: string;
         status: string;
         engagement?: Engagement;
+        movement?: Movement;
         gameState?: Game;
         randomAssignment?: boolean;
         cards?: Card[];

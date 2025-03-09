@@ -11,6 +11,7 @@ export default function assignArmies(players: Player[], countries: Country[], st
 
     for (let i = 0; i < players.length; i++){
         players[i].armies = startingArmies;
+        players[i].cards = []
     }
     for (let i = 0; i < countries.length; i++){
         const ownerIndex: number = countries[i].ownerID
