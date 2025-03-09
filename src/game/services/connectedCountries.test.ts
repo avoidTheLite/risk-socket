@@ -7,7 +7,7 @@ const alaska: Country = {
     id: 0,
     name: 'Alaska',
     continent: 'North America',
-    connectedTo: [ 1, 5 ]
+    connectedTo: [ 1, 5, 31 ]
   }
 
 const alberta: Country = {
@@ -24,11 +24,18 @@ const northwestTerritory: Country = {
     connectedTo: [ 0, 1, 4, 6, 7 ]
   }
 
+const kamchatka: Country = {
+  id: 31,
+  name: 'Kamchatka',
+  continent: 'Asia',
+  connectedTo: [ 0, 27, 29, 32, 34, 35 ]
+}
+
   describe('connectedCountries', () => {
 
     test('Should return Alberta and Northwest territory when Alaska is passed', () => {
         const countries: Country[] = defaultCountrySeed()
         const connected = connectedCountries(countries, 0)
-        expect(connected).toEqual([alberta, northwestTerritory])
+        expect(connected).toEqual([alberta, northwestTerritory, kamchatka])
     })
   })

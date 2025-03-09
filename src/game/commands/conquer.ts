@@ -30,7 +30,7 @@ export default async function conquer(game: Game, engagement: Engagement) {
     game.countries[engagement.defendingCountry].ownerID = game.activePlayerIndex;
     game.turnTracker.phase = 'combat';
     engagement.conquered = false;
-
+    game = await saveGame(game);
     const response = {
         data: {
             action: 'conquer',

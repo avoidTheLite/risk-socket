@@ -57,7 +57,7 @@ function defaultCountrySeed():Country[] {
             id: 0,
             name: 'Alaska',
             continent: 'North America',
-            connectedTo: [ 1, 5 ],
+            connectedTo: [ 1, 5, 31 ],
           },
           {
             id: 1,
@@ -243,7 +243,7 @@ function defaultCountrySeed():Country[] {
             id: 31,
             name: 'Kamchatka',
             continent: 'Asia',
-            connectedTo: [ 27, 29, 32, 34, 35 ]
+            connectedTo: [ 0, 27, 29, 32, 34, 35 ]
           },
           {
             id: 32,
