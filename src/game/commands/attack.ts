@@ -6,6 +6,11 @@ import saveGame from "../saveGame";
 export function combatResult(game: Game, engagement: Engagement): Game {
     game.countries[engagement.attackingCountry].armies -= engagement.attackersLost;
     game.countries[engagement.defendingCountry].armies -= engagement.defendersLost;
+    if (game.countries[engagement.defendingCountry].armies == 0) {
+        engagement.conquered = true;
+        game.turnTracker.earnedCard = true;
+        game.turnTracker.phase = 'conquer';
+    }
     return game
 }
 export default async function attack(game: Game, engagement: Engagement): Promise<WsResponse> {

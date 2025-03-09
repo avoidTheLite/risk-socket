@@ -133,7 +133,7 @@ export interface GameRecord {
 
 export type Phase = "deploy" | "play" | "end";
 
-export type TurnPhase = "start" | "deploy" | "combat" | "move" | "card";
+export type TurnPhase = "start" | "deploy" | "combat" | "conquer" | "move" | "card";
 
 export interface TurnTracker {
     phase: TurnPhase;
@@ -149,6 +149,7 @@ export interface Engagement {
     defendersLost?: number;
     attackerRolls?: number[];
     defenderRolls?: number[];
+    conquered?: boolean;
 }
 
 export interface Deployment {
@@ -171,6 +172,7 @@ export enum WsActions {
     EndTurn = 'endTurn',
     Attack = 'attack',
     CardMatch = 'cardMatch',
+    Conquer = 'conquer',
 }
 export interface WsRequest {
     data: {

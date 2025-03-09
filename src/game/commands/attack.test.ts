@@ -13,7 +13,7 @@ describe('attack - Unit tests', () => {
 
     test('Combat result applied correctly', () => {
         game.phase = 'play';
-        const engagement: Engagement = {
+        let engagement: Engagement = {
             attackingCountry: 0,
             defendingCountry: 1,
             attackingTroopCount: 3,
@@ -147,5 +147,49 @@ describe('attack - Integration tests', () => {
         expect(totalEndingArmies).toBe(totalStartingArmies - 2);
         expect(response.data.engagement).toEqual(engagement)
     })
+
+    test('conquered is set to true if defending country is conquered', async () => {
+        game.phase = 'play';
+        game.turnTracker.phase = 'combat';
+        let engagement: Engagement = {
+            attackingCountry: 0,
+            defendingCountry: 1,
+            attackingTroopCount: 3,
+            defendingTroopCount: 1
+        }
+        game.countries[engagement.attackingCountry].armies = 10
+        game.countries[engagement.defendingCountry].armies = 1;
+        game.countries[engagement.attackingCountry].ownerID = 0;
+        game.countries[engagement.defendingCountry].ownerID = 1;
+        while (game.countries[engagement.defendingCountry].armies > 0) {
+            const response = await attack(game, engagement);
+            console.log(response.data.engagement)
+            game = response.data.gameState;
+        }
+        expect(game.countries[engagement.defendingCountry].armies).toBe(0);
+        expect(engagement.conquered).toBe(true);
+
+    });
+
+    test('After defeating country, attack is disabled if conquer step has not occurred', async () => {
+        game.phase = 'play';
+        game.turnTracker.phase = 'combat';
+        let engagement: Engagement = {
+            attackingCountry: 0,
+            defendingCountry: 1,
+            attackingTroopCount: 3,
+            defendingTroopCount: 1
+        }
+        game.countries[engagement.attackingCountry].armies = 10
+        game.countries[engagement.defendingCountry].armies = 1;
+        game.countries[engagement.attackingCountry].ownerID = 0;
+        game.countries[engagement.defendingCountry].ownerID = 1;
+        while (game.countries[engagement.defendingCountry].armies > 0) {
+            const response = await attack(game, engagement);
+            console.log(response.data.engagement)
+            game = response.data.gameState;
+        }
+        await expect(attack(game, engagement)).rejects.toThrow(attackError);
+    });
     
 })

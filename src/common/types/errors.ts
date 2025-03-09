@@ -95,3 +95,13 @@ export class cardMatchError extends Error {
         this.name = args.name || 'Error';
     }
 }
+
+export class conquerError extends Error {
+    name: string;
+
+    constructor(args: StandardErrorArgs) {
+        super(args.message);
+        Object.setPrototypeOf(this, new.target.prototype);
+        this.name = args.name || 'Error';
+    }
+}
