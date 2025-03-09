@@ -15,7 +15,8 @@ describe('conquer - Unit tests', () => {
             defendingCountry: 1,
             attackingTroopCount: 3,
             attackersLost: 1,
-            defendersLost: 1
+            defendersLost: 1,
+            conquered: true
         }
         game.countries[engagement.defendingCountry].armies = 5;
         await expect(conquer(game, engagement)).rejects.toThrow(conquerError);
