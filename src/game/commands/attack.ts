@@ -2,6 +2,7 @@ import rollCombat from "../services/rollCombat";
 import { Game, Engagement, WsResponse } from "../../common/types/types";
 import { attackError } from "../../common/types/errors";
 import saveGame from "../saveGame";
+import victoryCheck from "../services/victoryCheck";
 
 export function combatResult(game: Game, engagement: Engagement): Game {
     game.countries[engagement.attackingCountry].armies -= engagement.attackersLost;
@@ -35,11 +36,24 @@ export default async function attack(game: Game, engagement: Engagement): Promis
     
     engagement = rollCombat(engagement);
     game = combatResult(game, engagement);
+    let message: string
+    if (engagement.conquered) {
+        const victory: boolean = victoryCheck(game);
+        if (victory) {
+            message = `Player ${game.activePlayerIndex} has won the game after conquering ${game.countries[engagement.defendingCountry].name}!`
+            game.phase = 'end';
+        } else {
+            message = `Player ${game.activePlayerIndex} has defeated ${game.countries[engagement.defendingCountry].name}!`
+        }
+    }
+    else {
+        message = `Player ${game.activePlayerIndex} has attacked ${game.countries[engagement.defendingCountry].name} with ${engagement.attackingTroopCount} armies from ${game.countries[engagement.attackingCountry].name}. `
+    }
     game = await saveGame(game);
     const response = {
         data: {
             action: 'attack',
-            message: `Player ${game.activePlayerIndex} has attacked ${game.countries[engagement.defendingCountry].name} with ${engagement.attackingTroopCount} armies from ${game.countries[engagement.attackingCountry].name}. `,
+            message: message,
             status: "success",
             engagement: engagement,
             gameState: game
