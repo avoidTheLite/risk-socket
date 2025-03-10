@@ -1,4 +1,4 @@
-import { Game, Player, Globe, Card } from '../common/types/types';
+import { Game, Player, Globe, Card, GameOptions } from '../common/types/types';
 import ShortUniqueId = require('short-unique-id');
 import { playerCountError } from '../common/types/errors';
 import saveGame from './saveGame';
@@ -9,7 +9,7 @@ import defaultCardSeed from '../common/util/test/defaultCardSeed';
 
 let uid = new ShortUniqueId({ length: 10 });
 
-async function newGame(players: Player[], globeID: string, randomAssignment?: boolean) {
+async function newGame(players: Player[], globeID: string, gameOptions?: GameOptions) {
     try {
         console.log(`loading game with globe ID ${globeID}`)
         let globe: Globe = await loadGlobe(globeID);
@@ -38,7 +38,7 @@ async function newGame(players: Player[], globeID: string, randomAssignment?: bo
             matches: 0    
         }
         game.saveName = game.id + ' - autosave turn ' + game.turn;
-        game.countries = await assignCountries(players, globe.countries, randomAssignment)
+        game.countries = await assignCountries(players, globe.countries, gameOptions)
         game.players = await assignArmies(players, globe.countries)
         game = await saveGame(game) 
         console.log(`New game created: ${game.id} with save name: ${game.saveName}`)

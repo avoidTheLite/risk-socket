@@ -1,8 +1,8 @@
-import { Country, Player } from "../../common/types/types";
+import { Country, Player, GameOptions } from "../../common/types/types";
 
-export default function assignCountries(players: Player[], countries: Country[], randomAssignment?: boolean) {
+export default function assignCountries(players: Player[], countries: Country[], gameOptions?: GameOptions) {
     //Fisher-yates shuffle
-    if (randomAssignment) {
+    if (gameOptions?.randomAssignment) {
         for (let i = countries.length-1; i > 0; i--) {
             let j: number = Math.floor(Math.random()*(i+1));
             [countries[i], countries[j]] = [countries[j], countries[i]]
