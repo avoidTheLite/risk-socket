@@ -69,4 +69,20 @@ describe('assign countries to 4 players', () => {
         expect(countryOwnerIDs).not.toEqual([0, 1, 2, 3, 0, 1, 2, 3, 0, 1, 2, 3, 0, 1, 2, 3, 0, 1, 2, 3, 0, 1, 2, 3, 0, 1, 2, 3, 0, 1, 2, 3, 0, 1, 2, 3, 0, 1, 2, 3, 0, 1])
 
     })
+
+    test('when neutralArmies is true, armies are divided 3 ways', () => {
+        const playerCount: number = 2;
+        const players: Player[] = createTestPlayers(playerCount);
+        let countries: Country[] = defaultCountrySeed();
+        const gameOptions: GameOptions = {
+            neutralArmies: true
+        }
+        countries = assignCountries(players, countries, gameOptions)
+        let countryOwnerIDs: number[] = [];
+        for (let i = 0; i < countries.length; i++) {
+            countryOwnerIDs.push(Number(countries[i].ownerID))
+        }
+        expect(countryOwnerIDs).toEqual([0, 1, 99, 0, 1, 99, 0, 1, 99, 0, 1, 99, 0, 1, 99, 0, 1, 99, 0, 1, 99, 0, 1, 99, 0, 1, 99, 0, 1, 99, 0, 1, 99, 0, 1, 99, 0, 1, 99, 0, 1, 99, ])
+        expect(players.length).toBe(2)
+    })
 }) 
