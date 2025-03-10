@@ -33,5 +33,8 @@ export default function calculateReinforcements(activePlayerIndex: number, count
        
     }
     reinforcements += Math.floor(countriesOwned/3);
+    if (reinforcements < 3) {
+        reinforcements = 3
+    }
     return reinforcements   
 }

@@ -28,4 +28,15 @@ describe('Calculate reinforcements - Unit Tests', () => {
         const reinforcements = calculateReinforcements(0, game.countries, game.continents);
         expect(reinforcements).toBe(expectedReinforcements)
     })
+
+    test('should always reinforce at least 3 armies', () => {
+        const countriesOwned: number = 5
+        const expectedReinforcements: number = 3
+        let game = createTestGame(4);
+        for (let i = 0; i < countriesOwned-1; i++) {
+            game.countries[2*i].ownerID = 0; // skip countries to ensure player owns 0 continents
+        }
+        const reinforcements = calculateReinforcements(0, game.countries, game.continents);
+        expect(reinforcements).toBe(expectedReinforcements)
+    })
 })
