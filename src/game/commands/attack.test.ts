@@ -1,7 +1,7 @@
 import { default as attack, combatResult } from "./attack";
 import { describe, test, expect, beforeEach } from '@jest/globals';
 import createTestGame from "../../common/util/test/createTestGame";
-import { Engagement, Game } from "../../common/types/types";
+import { Engagement, Game, WsResponse } from "../../common/types/types";
 import { attackError } from "../../common/types/errors";
 
 
@@ -186,10 +186,36 @@ describe('attack - Integration tests', () => {
         game.countries[engagement.defendingCountry].ownerID = 1;
         while (game.countries[engagement.defendingCountry].armies > 0) {
             const response = await attack(game, engagement);
-            console.log(response.data.engagement)
             game = response.data.gameState;
         }
         await expect(attack(game, engagement)).rejects.toThrow(attackError);
     });
+
+    test('should send victory message after willing the game', async () => {
+        const victoryMessage = "Player 0 has won the game after conquering Alberta!"
+        let response: WsResponse
+        game.phase = 'play';
+        game.turnTracker.phase = 'combat';
+        const engagement: Engagement = {
+            attackingCountry: 0,
+            defendingCountry: 1,
+            attackingTroopCount: 3,
+            defendingTroopCount: 1
+        }
+        for (let i = 2; i < game.countries.length; i++) {
+            game.countries[i].ownerID = 0;
+            game.countries[i].armies = 1;
+        }
+        game.countries[engagement.attackingCountry].armies = 10
+        game.countries[engagement.attackingCountry].ownerID = 0;
+        game.countries[engagement.defendingCountry].ownerID = 1;
+        game.countries[engagement.defendingCountry].armies = 1;
+        
+        while (game.countries[engagement.defendingCountry].armies > 0) {
+            response = await attack(game, engagement);
+        }
+        expect(response.data.message).toBe(victoryMessage);
+        expect(response.data.gameState.phase).toBe('end');
+    })
     
 })
