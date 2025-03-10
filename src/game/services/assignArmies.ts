@@ -15,8 +15,12 @@ export default function assignArmies(players: Player[], countries: Country[], st
     }
     for (let i = 0; i < countries.length; i++){
         const ownerIndex: number = countries[i].ownerID
+        if (ownerIndex == 99) {
+            countries[i].armies = 2
+        } else {
         players[ownerIndex].armies -= 1;
         countries[i].armies = 1
+        }
     }
 
     return players

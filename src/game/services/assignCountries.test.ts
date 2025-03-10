@@ -2,7 +2,7 @@ import assignCountries from "./assignCountries";
 import { describe, expect, test, it } from "@jest/globals";
 import createTestPlayers from "../../common/util/test/createTestPlayers";
 import { defaultCountrySeed } from "../../common/util/test/defaultGlobeSeed";
-import { Player, Country } from "../../common/types/types"
+import { Player, Country, GameOptions } from "../../common/types/types"
 
 describe('assign countries to 4 players', () => {
 
@@ -43,7 +43,10 @@ describe('assign countries to 4 players', () => {
         const playerCount: number = 4
         const players: Player[] = createTestPlayers(playerCount);
         let countries: Country[] = defaultCountrySeed();
-        countries = assignCountries(players, countries, false)
+        const gameOptions: GameOptions = {
+            randomAssignment: false
+        }
+        countries = assignCountries(players, countries, gameOptions)
         let countryOwnerIDs: number[] = [];
         for (let i = 0; i < countries.length; i++) {
             countryOwnerIDs.push(Number(countries[i].ownerID))
@@ -55,12 +58,31 @@ describe('assign countries to 4 players', () => {
         const playerCount: number = 4
         const players: Player[] = createTestPlayers(playerCount);
         let countries: Country[] = defaultCountrySeed();
-        countries = assignCountries(players, countries, true)
+        const gameOptions: GameOptions = {
+            randomAssignment: true
+        }
+        countries = assignCountries(players, countries, gameOptions)
         let countryOwnerIDs: number[] = [];
         for (let i = 0; i < countries.length; i++) {
             countryOwnerIDs.push(Number(countries[i].ownerID))
         }
         expect(countryOwnerIDs).not.toEqual([0, 1, 2, 3, 0, 1, 2, 3, 0, 1, 2, 3, 0, 1, 2, 3, 0, 1, 2, 3, 0, 1, 2, 3, 0, 1, 2, 3, 0, 1, 2, 3, 0, 1, 2, 3, 0, 1, 2, 3, 0, 1])
 
+    })
+
+    test('when neutralArmies is true, armies are divided 3 ways', () => {
+        const playerCount: number = 2;
+        const players: Player[] = createTestPlayers(playerCount);
+        let countries: Country[] = defaultCountrySeed();
+        const gameOptions: GameOptions = {
+            neutralArmies: true
+        }
+        countries = assignCountries(players, countries, gameOptions)
+        let countryOwnerIDs: number[] = [];
+        for (let i = 0; i < countries.length; i++) {
+            countryOwnerIDs.push(Number(countries[i].ownerID))
+        }
+        expect(countryOwnerIDs).toEqual([0, 1, 99, 0, 1, 99, 0, 1, 99, 0, 1, 99, 0, 1, 99, 0, 1, 99, 0, 1, 99, 0, 1, 99, 0, 1, 99, 0, 1, 99, 0, 1, 99, 0, 1, 99, 0, 1, 99, 0, 1, 99, ])
+        expect(players.length).toBe(2)
     })
 }) 

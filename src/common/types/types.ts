@@ -163,6 +163,11 @@ export interface Movement {
     armies: number;
 }
 
+export interface GameOptions {
+    randomAssignment?: boolean;
+    neutralArmies?: boolean;
+}
+
 export enum LogLevel {
     ERROR = 'error',
     WARN = 'warn',
@@ -193,7 +198,7 @@ export interface WsRequest {
         deployment?: Deployment;
         movement?: Movement;
         engagement?: Engagement;
-        randomAssignment?: boolean;
+        gameOptions?: GameOptions;
         cards?: Card[];
     }
 }
@@ -206,7 +211,7 @@ export interface WsResponse {
         engagement?: Engagement;
         movement?: Movement;
         gameState?: Game;
-        randomAssignment?: boolean;
+        gameOptions?: GameOptions;
         cards?: Card[];
     }
 }

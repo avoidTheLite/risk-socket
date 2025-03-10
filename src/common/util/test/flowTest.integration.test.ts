@@ -32,7 +32,9 @@ describe('Websocket end to end flow tests', () => {
                 message: 'This is the Client test message',
                 players: createTestPlayers(2),
                 globeID: 'defaultGlobeID',
-                randomAssignment: false,
+                gameOptions: {
+                    randomAssignment:false,
+                }
             }
         }
 
