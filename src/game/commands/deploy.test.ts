@@ -16,11 +16,11 @@ describe('deploy', () => {
         game.players[game.activePlayerIndex].armies = 5
         // const playerArmies = game.players[game.activePlayerIndex].armies
         let armiesDeployed = 2;
-        let countryID = 10;
-        game.countries[countryID].armies = 0
-        game.countries[countryID].ownerID = 0
-        const savedGame = await deploy(game, countryID, armiesDeployed);
-        expect(game.countries[countryID].armies).toBe(armiesDeployed);
+        let targetCountry = 10;
+        game.countries[targetCountry].armies = 0
+        game.countries[targetCountry].ownerID = 0
+        const savedGame = await deploy(game, targetCountry, armiesDeployed);
+        expect(game.countries[targetCountry].armies).toBe(armiesDeployed);
         expect(game.players[game.activePlayerIndex].armies).toBe(3);
         
     })
@@ -29,17 +29,17 @@ describe('deploy', () => {
 
         const playerArmies = game.players[game.activePlayerIndex].armies
         let armiesDeployed = 2;
-        let countryID = 10;
-        game.countries[countryID].armies = 0
-        await expect(deploy(game, countryID, armiesDeployed)).rejects.toThrow(deployError);
+        let targetCountry = 10;
+        game.countries[targetCountry].armies = 0
+        await expect(deploy(game, targetCountry, armiesDeployed)).rejects.toThrow(deployError);
     })
 
     test('should throw an error if country does not belong to player', async () => {
         game.players[game.activePlayerIndex].armies = 5
         let armiesDeployed = 2;
-        let countryID = 10;
-        game.countries[countryID].ownerID = 1
-        await expect(deploy(game, countryID, armiesDeployed)).rejects.toThrow(deployError);
+        let targetCountry = 10;
+        game.countries[targetCountry].ownerID = 1
+        await expect(deploy(game, targetCountry, armiesDeployed)).rejects.toThrow(deployError);
     })
 
     test('should throw an error if gamePhase is not deploy and turnPhase is not deploy', async () => {
@@ -47,20 +47,20 @@ describe('deploy', () => {
         game.turnTracker.phase = 'combat'
         game.players[game.activePlayerIndex].armies = 5
         let armiesDeployed = 2;
-        let countryID = 10;
-        game.countries[countryID].ownerID = 0
+        let targetCountry = 10;
+        game.countries[targetCountry].ownerID = 0
 
-        await expect(deploy(game, countryID, armiesDeployed)).rejects.toThrow(deployError);
+        await expect(deploy(game, targetCountry, armiesDeployed)).rejects.toThrow(deployError);
     })
 
     test('should set turnPhase to combat if player has no more armies', async () => {
         game.phase = 'play'
         game.players[game.activePlayerIndex].armies = 2
         let armiesDeployed = 2;
-        let countryID = 10;
-        game.countries[countryID].armies = 0
-        game.countries[countryID].ownerID = 0
-        const savedGame = await deploy(game, countryID, armiesDeployed);
+        let targetCountry = 10;
+        game.countries[targetCountry].armies = 0
+        game.countries[targetCountry].ownerID = 0
+        const savedGame = await deploy(game, targetCountry, armiesDeployed);
         expect(game.turnTracker.phase).toBe('combat');
     })
 })
