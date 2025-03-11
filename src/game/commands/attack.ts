@@ -49,6 +49,7 @@ export default async function attack(game: Game, engagement: Engagement): Promis
     else {
         message = `Player ${game.activePlayerIndex} has attacked ${game.countries[engagement.defendingCountry].name} with ${engagement.attackingTroopCount} armies from ${game.countries[engagement.attackingCountry].name}. `
     }
+    game.lastEngagement = engagement;
     game = await saveGame(game);
     const response = {
         data: {

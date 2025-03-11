@@ -19,7 +19,8 @@ export default async function saveGame(game: Game) {
         phase: game.phase,
         activePlayerIndex: game.activePlayerIndex,
         cardsAvailable: JSON.stringify(game.cardsAvailable),
-        matches: game.matches
+        matches: game.matches,
+        lastEngagement: JSON.stringify(game.lastEngagement)
     }
     try{
         const saveExists = await db('gameState').where('saveName', '=', game.saveName).first();

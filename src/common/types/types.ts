@@ -77,6 +77,7 @@ export class Game {
     name?: string;
     created_at?: string;
     updated_at?: string;
+    lastEngagement?: Engagement;
 
     constructor(
         saveName: string,
@@ -92,8 +93,7 @@ export class Game {
         cardsAvailable: Card[],
         matches?: number,
         name?: string,
-        created_at?: string,
-        updated_at?: string
+        lastEngagement?: Engagement
     ){
         this.saveName = saveName;
         this.id = id;
@@ -108,8 +108,8 @@ export class Game {
         this.cardsAvailable = cardsAvailable;
         this.matches = matches;
         this.name = name;
-        this.created_at = created_at;
-        this.updated_at = updated_at;
+        this.lastEngagement = lastEngagement;
+
     }
 }
 
@@ -129,6 +129,7 @@ export interface GameRecord {
     matches: number;
     created_at?: string;
     updated_at?: string;
+    lastEngagement?: string;
 }
 
 export type Phase = "deploy" | "play" | "end";

@@ -132,16 +132,45 @@ describe('conquer - Unit tests', () => {
         await expect(conquer(game, engagement)).rejects.toThrow(conquerError);
     })
 
-    test('should successfully conquer a country', async () => {
+    test('should throw an error if conquering from a different country than attacking', async () => {
         game = createTestGame(4);
         let engagement: Engagement = {
+            attackingCountry: 5,
+            defendingCountry: 1,
+            attackingTroopCount: 3,
+            conquered: true
+        }
+        game.lastEngagement = {
             attackingCountry: 0,
             defendingCountry: 1,
             attackingTroopCount: 3,
             defendingTroopCount: 2,
             attackersLost: 1,
             defendersLost: 1,
+        }
+        game.turnTracker.phase = 'conquer';
+        game.countries[engagement.attackingCountry].armies = 5;
+        game.countries[engagement.attackingCountry].ownerID = 0;
+        game.countries[engagement.defendingCountry].armies = 0;
+        game.countries[engagement.defendingCountry].ownerID = 1;
+        await expect(conquer(game, engagement)).rejects.toThrow(conquerError);
+    })
+
+    test('should successfully conquer a country', async () => {
+        game = createTestGame(4);
+        let engagement: Engagement = {
+            attackingCountry: 0,
+            defendingCountry: 1,
+            attackingTroopCount: 3,
             conquered: true
+        }
+        game.lastEngagement = {
+            attackingCountry: 0,
+            defendingCountry: 1,
+            attackingTroopCount: 3,
+            defendingTroopCount: 2,
+            attackersLost: 1,
+            defendersLost: 1,
         }
         game.turnTracker.phase = 'conquer';
         game.countries[engagement.attackingCountry].armies = 5;
@@ -153,4 +182,6 @@ describe('conquer - Unit tests', () => {
         expect(game.countries[engagement.defendingCountry].ownerID).toBe(0);
         expect(game.turnTracker.phase).toBe('combat');
     })
+
+    
 })
