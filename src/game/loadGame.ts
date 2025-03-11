@@ -17,8 +17,7 @@ export default async function loadGame(saveName: string): Promise<Game> {
         "gameState.activePlayerIndex",
         "gameState.cardsAvailable",
         "gameState.matches",
-        "gameState.created_at",
-        "gameState.updated_at"
+        "gameState.lastEngagement"
     ).from('gameState')
     .where('gameState.saveName', '=', saveName)
     .then((gameRecord: GameRecord[]) => {
@@ -41,6 +40,8 @@ export default async function loadGame(saveName: string): Promise<Game> {
                 gameRecord[0].activePlayerIndex,
                 gameRecord[0].cardsAvailable = typeof gameRecord[0].cardsAvailable === 'string' ? JSON.parse(gameRecord[0].cardsAvailable) : gameRecord[0].cardsAvailable,
                 gameRecord[0].matches,
+                gameRecord[0].name,
+                gameRecord[0].lastEngagement = typeof gameRecord[0].lastEngagement === 'string' ? JSON.parse(gameRecord[0].lastEngagement) : gameRecord[0].lastEngagement,
             )
         }
 
