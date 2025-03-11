@@ -164,6 +164,25 @@ export interface Movement {
     armies: number;
 }
 
+export interface AvailableCommand {
+    action: WsActions;
+    playerID: number; 
+    available: boolean;
+    deployOptions?: Deployment[];
+    moveOptions?: Movement[];
+    attackOptions?: Engagement[];
+    conquerOption?: Engagement;
+    cardMatchOptions?: Card[][];
+}
+
+export interface AvailableCommands {
+    deploy: AvailableCommand;
+    move: AvailableCommand;
+    attack: AvailableCommand;
+    conquer: AvailableCommand;
+    cardMatch: AvailableCommand;
+}
+
 export interface GameOptions {
     randomAssignment?: boolean;
     neutralArmies?: boolean;
@@ -214,5 +233,6 @@ export interface WsResponse {
         gameState?: Game;
         gameOptions?: GameOptions;
         cards?: Card[];
+        availableCommands?: AvailableCommands;
     }
 }
