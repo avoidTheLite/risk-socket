@@ -53,8 +53,10 @@ describe('Websocket end to end flow tests', () => {
             data: {
                 action: 'deploy',
                 playerID: 0,
-                countryID: 0,
-                armies: 19,
+                deployment: {
+                    targetCountry: 0,
+                    armies: 19,
+                },
                 saveName: game.saveName
             }
         }
@@ -65,7 +67,7 @@ describe('Websocket end to end flow tests', () => {
         })
         game = JSON.parse(responseMessage).data.gameState;
         expect(JSON.parse(responseMessage).data.status).toEqual('success');
-        expect(game.countries[0].armies).toEqual(testMessage.data.armies+1);
+        expect(game.countries[0].armies).toEqual(testMessage.data.deployment.armies+1);
         expect(game.players[0].armies).toEqual(0);
 
     });
@@ -92,8 +94,10 @@ describe('Websocket end to end flow tests', () => {
             data: {
                 action: 'deploy',
                 playerID: 1,
-                countryID: 1,
-                armies: 19,
+                deployment: {
+                    targetCountry: 1,
+                    armies: 19,
+                },
                 saveName: game.saveName
             }
         }
@@ -104,7 +108,7 @@ describe('Websocket end to end flow tests', () => {
         })
         game = JSON.parse(responseMessage).data.gameState;
         expect(JSON.parse(responseMessage).data.status).toEqual('success');
-        expect(game.countries[1].armies).toEqual(testMessage.data.armies+1);
+        expect(game.countries[1].armies).toEqual(testMessage.data.deployment.armies+1);
         expect(game.players[1].armies).toEqual(0);
 
     });
@@ -133,8 +137,10 @@ describe('Websocket end to end flow tests', () => {
             data: {
                 action: 'deploy',
                 playerID: 0,
-                countryID: 0,
-                armies: game.players[0].armies,
+                deployment: {
+                    targetCountry: 0,
+                    armies: game.players[0].armies,
+                },
                 saveName: game.saveName
             }
         }
@@ -197,8 +203,10 @@ describe('Websocket end to end flow tests', () => {
             data: {
                 action: 'deploy',
                 playerID: 1,
-                countryID: 1,
-                armies: game.players[1].armies,
+                deployment: {
+                    targetCountry: 1,
+                    armies: game.players[1].armies,
+                },
                 saveName: game.saveName
             }
         }
@@ -262,8 +270,10 @@ describe('Websocket end to end flow tests', () => {
             data: {
                 action: 'deploy',
                 playerID: 0,
-                countryID: 0,
-                armies: game.players[0].armies,
+                deployment: {
+                    targetCountry: 0,
+                    armies: game.players[0].armies,
+                },
                 saveName: game.saveName
             }
         }

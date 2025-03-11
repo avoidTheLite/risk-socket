@@ -135,8 +135,10 @@ Expected response for success:
     "data": {
         "action": "deploy",
         "message": "",
-        "countryID": 0,
-        "armies": 19,
+        "deployment": {
+            "countryID": 0,
+            "armies": 19
+        },
         "playerID": 0,
         "saveName": "cG9XFr3pBy - autosave turn 1"
     }
