@@ -32,7 +32,7 @@ export default async function wsMessageHandler(data: any) {
                 message: `Not your turn to deploy. Active player = player ${game.activePlayerIndex}. Player ID = ${data.playerID}`
             })
         }
-        game = await deploy(game, data.deployment.targetCountry, data.deployment.armies);
+        game = await deploy(game, data.deployment);
         response = {
             data: {
                 action: data.action,
