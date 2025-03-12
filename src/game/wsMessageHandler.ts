@@ -1,6 +1,6 @@
 import deploy from "./commands/deploy";
 import newGame from "./newGame";
-import { Game, WsResponse, Engagement } from "../common/types/types";
+import { Game, WsResponse } from "../common/types/types";
 import loadGame from "./loadGame";
 import { turnError } from "../common/types/errors";
 import endTurn from "./commands/endTurn";
@@ -8,6 +8,7 @@ import attack from "./commands/attack";
 import cardMatch from "./commands/cardMatch";
 import conquer from "./commands/conquer";
 import move from "./commands/move";
+import availableCommands from "./commands/availableCommands";
 
 export default async function wsMessageHandler(data: any) {
     let game: Game
@@ -95,6 +96,10 @@ export default async function wsMessageHandler(data: any) {
             })
         }
         response = await move(game, data.movement);
+        return response
+    case 'availableCommands':
+        game = await loadGame(data.saveName);
+        response = await availableCommands(game, data.playerID);
         return response
     case 'echo':
         response = {

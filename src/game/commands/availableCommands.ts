@@ -1,7 +1,6 @@
 import { conquerError } from "../../common/types/errors";
 import { Game, WsActions, AvailableCommand, Deployment, Movement, Engagement, Card } from "../../common/types/types";
 import { WsResponse } from "../../common/types/types";
-import cardMatch from "./cardMatch";
 
 function deployOptions(game: Game, playerID: number, deploy: AvailableCommand): AvailableCommand {
     
@@ -21,9 +20,36 @@ function deployOptions(game: Game, playerID: number, deploy: AvailableCommand): 
     return deploy
 }
 
-function cardMatchOptions(game: Game, playerID: number, cardMatch: AvailableCommand): AvailableCommand {
+export function cardMatchOptions(cards: Card[], cardMatch: AvailableCommand): AvailableCommand {
+    const wildCount: number = cards.filter((card) => card.symbol === 'wildcard').length;
+    // add 3 of a kind matches
+    for (let i = 0; i < cards.length; i++) {
+        const matchingCards: Card[] = cards.filter((card) => card.symbol === cards[i].symbol);
+        if (matchingCards.length >= 3) {
+            cardMatch.cardMatchOptions.push(matchingCards);
+            for (let j = 0; j < matchingCards.length; j++) {
+                cards.splice(cards.indexOf(matchingCards[j]), 1);
+            }
+        }
+    }
+    // add 1 of each symbol matches
+    if (wildCount > 0) {
+        const matchingCards = [...cards];
+        cardMatch.cardMatchOptions.push(matchingCards);
+    } else {
+        const infantryCards: Card[] = cards.filter((card) => card.symbol === 'infantry');
+        const cavalryCards: Card[] = cards.filter((card) => card.symbol === 'cavalry');
+        const artilleryCards: Card[] = cards.filter((card) => card.symbol === 'artillery');
+        if (infantryCards.length > 0 && cavalryCards.length > 0 && artilleryCards.length > 0) {
+            cardMatch.cardMatchOptions.push(cards);
+        }
+        }
+    
 
-
+    
+    if (cardMatch.cardMatchOptions.length > 0) {
+        cardMatch.available = true;
+    }
     return cardMatch
 }
 
@@ -50,7 +76,7 @@ function attackOptions(game: Game, playerID: number, attack: AvailableCommand): 
     return attack
 }
 
-function conquerOptions(game: Game, playerID: number, conquer: AvailableCommand): AvailableCommand {
+function conquerOptions(game: Game, conquer: AvailableCommand): AvailableCommand {
     if (game.lastEngagement.conquered != true){
         throw new conquerError({ message: `Mismatch in turntracker phase and engagement state. Turntracker phase: ${game.turnTracker.phase}, engagement conquered state: ${game.lastEngagement.conquered}`});
     }
@@ -66,6 +92,23 @@ function conquerOptions(game: Game, playerID: number, conquer: AvailableCommand)
 
 function moveOptions(game: Game, playerID: number, move: AvailableCommand): AvailableCommand {
     
+    for (let i = 0; i < game.countries.length; i++) {
+        if (game.countries[i].ownerID === game.activePlayerIndex && game.countries[i].armies > 1) {
+            for (let j = 0; j < game.countries[i].connectedTo.length; j++){
+                if (game.countries[game.countries[i].connectedTo[j]].ownerID === game.activePlayerIndex) {
+                    const moveOption: Movement = {
+                        targetCountry: game.countries[i].connectedTo[j],
+                        sourceCountry: i,
+                        armies: game.countries[i].armies - 1,
+                    }
+                    move.moveOptions.push(moveOption)
+                }
+            }
+        }
+    }
+    if (move.moveOptions.length > 0){
+        move.available = true;
+    }
 
     return move
 }
@@ -105,15 +148,15 @@ export default function availableCommands(game: Game, playerID: number): WsRespo
         ) {
            deploy = deployOptions(game, playerID, deploy);
         }
-        if (game.phase === 'deploy' && game.players[playerID].cards.length >= 3){
-            cardMatch = cardMatchOptions(game, playerID, cardMatch);
+        if ((game.turnTracker.phase === 'deploy' && game.players[playerID].cards.length >= 3) || game.players[playerID].cards.length >= 5) {
+            cardMatch = cardMatchOptions(game.players[playerID].cards, cardMatch);
         }
         if (game.phase === 'play' && game.turnTracker.phase === 'combat') {
             attack = attackOptions(game, playerID, attack);
             move = moveOptions(game, playerID, move);
         }
         if (game.phase === 'play' && game.turnTracker.phase === 'conquer') {
-            conquer = conquerOptions(game, playerID, conquer);
+            conquer = conquerOptions(game, conquer);
         }
     }
 
@@ -128,7 +171,8 @@ export default function availableCommands(game: Game, playerID: number): WsRespo
                 attack,
                 conquer,
                 cardMatch,
-            }
+            },
+            gameState: game
         }
     }
     return response

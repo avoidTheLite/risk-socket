@@ -205,6 +205,7 @@ export enum WsActions {
     CardMatch = 'cardMatch',
     Conquer = 'conquer',
     Move = 'move',
+    AvailableCommands = 'availableCommands',
 }
 export interface WsRequest {
     data: {
