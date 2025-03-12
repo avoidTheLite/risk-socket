@@ -8,8 +8,8 @@ export default async function cardMatch(game: Game, cards: Card[]) {
         throw new cardMatchError({ message: 'Not enough cards to match' })
     }
     for (let i = 0; i < 3; i++) {
-        if (!game.players[game.activePlayerIndex].cards.includes(cards[i])) {
-            throw new cardMatchError({ message: 'Card not owned by player' })
+        if (!game.players[game.activePlayerIndex].cards.map(card => card.id).includes(cards[i].id)) {
+            throw new cardMatchError({ message: `Card not owned by player. ${cards[i].name}` })
         }
     }
     const wildCount: number = cards.filter(card => card.symbol === 'wildcard').length;
@@ -34,7 +34,7 @@ export default async function cardMatch(game: Game, cards: Card[]) {
     const response = {
         data: {
             action: 'cardMatch',
-            message: `You gain # armies from your match: ${cards[0].name}, ${cards[1].name}, ${cards[2].name}`,
+            message: `You gain ${armiesEarned} armies from your match: ${cards[0].name}, ${cards[1].name}, ${cards[2].name}`,
             status: 'success',
             cards: cards
         }
