@@ -11,13 +11,15 @@ export default function assignCountries(players: Player[], countries: Country[],
 
     let tempPlayers: Player[] = [...players];
     if (gameOptions?.neutralArmies) {
-        const neturalTemporaryPlayer = new Player(99, 'Neutral', 'Gray', 0, []);
-        tempPlayers.push(neturalTemporaryPlayer);
+        const neutralTemporaryPlayer = new Player(99, 'Neutral', 'gray', 0, []);
+        tempPlayers.push(neutralTemporaryPlayer);
     }
     
     for (let i = 0; i < countries.length; i++) {
         let playerID: number = tempPlayers[i % tempPlayers.length].id
         countries[i].ownerID = playerID
+        countries[i].color = tempPlayers[i % tempPlayers.length].color
+        
     }
     countries.sort((a: Country, b: Country) => a.id-b.id);
     return countries

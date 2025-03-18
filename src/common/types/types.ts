@@ -46,6 +46,7 @@ export interface Country {
     continent: string;
     connectedTo: number[];
     ownerID?: number;
+    color?: string;
     armies?: number;
 }
 

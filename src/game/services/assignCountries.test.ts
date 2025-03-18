@@ -84,5 +84,6 @@ describe('assign countries to 4 players', () => {
         }
         expect(countryOwnerIDs).toEqual([0, 1, 99, 0, 1, 99, 0, 1, 99, 0, 1, 99, 0, 1, 99, 0, 1, 99, 0, 1, 99, 0, 1, 99, 0, 1, 99, 0, 1, 99, 0, 1, 99, 0, 1, 99, 0, 1, 99, 0, 1, 99, ])
         expect(players.length).toBe(2)
+        expect(countries[2].color).toBe('gray')
     })
 }) 
