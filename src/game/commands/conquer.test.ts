@@ -175,11 +175,14 @@ describe('conquer - Unit tests', () => {
         game.turnTracker.phase = 'conquer';
         game.countries[engagement.attackingCountry].armies = 5;
         game.countries[engagement.attackingCountry].ownerID = 0;
+        game.countries[engagement.attackingCountry].color = "red";
         game.countries[engagement.defendingCountry].armies = 0;
         game.countries[engagement.defendingCountry].ownerID = 1;
+        game.countries[engagement.defendingCountry].color = "blue";
         const response = await conquer(game, engagement);
         expect(response.data.engagement.conquered).toBe(false);
         expect(game.countries[engagement.defendingCountry].ownerID).toBe(0);
+        expect(game.countries[engagement.defendingCountry].color).toBe(game.countries[engagement.attackingCountry].color);
         expect(game.turnTracker.phase).toBe('combat');
     })
 

@@ -31,6 +31,7 @@ export default async function conquer(game: Game, engagement: Engagement) {
     game.countries[engagement.attackingCountry].armies -= engagement.attackingTroopCount;
     game.countries[engagement.defendingCountry].armies = engagement.attackingTroopCount;
     game.countries[engagement.defendingCountry].ownerID = game.activePlayerIndex;
+    game.countries[engagement.defendingCountry].color = game.players[game.activePlayerIndex].color;
     game.turnTracker.phase = 'combat';
     engagement.conquered = false;
     game = await saveGame(game);
