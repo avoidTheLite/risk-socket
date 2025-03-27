@@ -24,6 +24,9 @@ export default async function conquer(game: Game, engagement: Engagement) {
     if (engagement.attackingTroopCount >= game.countries[engagement.attackingCountry].armies) {
         throw new conquerError({ message: `You must leave at least one army behind when conquering. Current armies on ${game.countries[engagement.attackingCountry].name}: ${game.countries[engagement.attackingCountry].armies}`});
     }
+    if (engagement.attackingTroopCount < game.lastEngagement.attackingTroopCount - game.lastEngagement.attackersLost) {
+        throw new conquerError({ message: `You must conquer at least as many armies that survived your last attack. ${game.lastEngagement.attackingTroopCount} attackers - ${game.lastEngagement.attackersLost} attackers lost = ${game.lastEngagement.attackingTroopCount - game.lastEngagement.attackersLost} minimum conquerers`});
+    }
     if(game.lastEngagement.attackingCountry !== engagement.attackingCountry) {
         throw new conquerError({ message: `You must conquer from the same country as your last attack. Current country: ${game.countries[engagement.attackingCountry].name}`});
     }
