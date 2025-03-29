@@ -177,7 +177,7 @@ function defaultCountrySeed():Country[] {
             id: 20,
             name: 'Congo',
             continent: 'Africa',
-            connectedTo: [ 21, 22, 23, 24, 25 ]
+            connectedTo: [ 21, 22, 24, 25 ]
           },
           {
             id: 21,
@@ -189,31 +189,31 @@ function defaultCountrySeed():Country[] {
             id: 22,
             name: 'Egypt',
             continent: 'Africa',
-            connectedTo: [ 20, 21, 23, 24, 25 ]
+            connectedTo: [ 20, 21, 24 ]
           },
           {
             id: 23,
             name: 'Madagascar',
             continent: 'Africa',
-            connectedTo: [ 20, 21, 22, 24 ]
+            connectedTo: [ 21, 25 ]
           },
           {
             id: 24,
             name: 'North Africa',
             continent: 'Africa',
-            connectedTo: [ 20, 22, 23, 25 ]
+            connectedTo: [ 10, 17, 19, 20, 21, 22]
           },
           {
             id: 25,
             name: 'South Africa',
             continent: 'Africa',
-            connectedTo: [ 20, 21, 22, 23 ]
+            connectedTo: [ 20, 21, 23 ]
           },
           {
             id: 26,
             name: 'Afghanistan',
             continent: 'Asia',
-            connectedTo: [ 27, 29, 33, 35 ]
+            connectedTo: [ 18, 27, 28, 33, 35 ]
           },
           {
             id: 27,
@@ -225,13 +225,13 @@ function defaultCountrySeed():Country[] {
             id: 28,
             name: 'India',
             continent: 'Asia',
-            connectedTo: [ 27, 29, 30, 32, 34 ]
+            connectedTo: [ 26, 27, 29, 30, 32, 34 ]
           },
           {
             id: 29,
             name: 'Irkutsk',
             continent: 'Asia',
-            connectedTo: [ 26, 27, 28, 30 ]
+            connectedTo: [ 27, 28, 30 ]
           },
           { 
             id: 30,
@@ -249,7 +249,7 @@ function defaultCountrySeed():Country[] {
             id: 32,
             name: 'Middle East',
             continent: 'Asia',
-            connectedTo: [ 28, 31, 33, 35 ]
+            connectedTo: [ 26, 28, 31, 33, 35 ]
           },
           {
             id: 33,
