@@ -9,7 +9,7 @@ export default async function conquer(game: Game, engagement: Engagement) {
     if (game.turnTracker.phase !== 'conquer') {
         throw new conquerError({ message: 'Not in conquer phase of your turn'});
     }
-    if (!engagement.conquered) {
+    if (!game.lastEngagement.conquered) {
         throw new conquerError({ message: 'Country has not been conquered'});
     }
     if (game.countries[engagement.attackingCountry].ownerID !== game.activePlayerIndex) {

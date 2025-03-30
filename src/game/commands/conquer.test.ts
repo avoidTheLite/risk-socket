@@ -18,6 +18,7 @@ describe('conquer - Unit tests', () => {
             defendersLost: 1,
             conquered: true
         }
+        game.lastEngagement = engagement;
         game.countries[engagement.defendingCountry].armies = 5;
         await expect(conquer(game, engagement)).rejects.toThrow(conquerError);
     })
@@ -32,6 +33,7 @@ describe('conquer - Unit tests', () => {
             defendersLost: 1,
             conquered: true
         }
+        game.lastEngagement = engagement;
         game.turnTracker.phase = 'combat';
         game.countries[engagement.attackingCountry].armies = 5;
         game.countries[engagement.attackingCountry].ownerID = 0;
@@ -50,6 +52,7 @@ describe('conquer - Unit tests', () => {
             defendersLost: 1,
             conquered: false
         }
+        game.lastEngagement = engagement;
         game.turnTracker.phase = 'conquer';
         game.countries[engagement.attackingCountry].armies = 5;
         game.countries[engagement.attackingCountry].ownerID = 0;
@@ -68,6 +71,7 @@ describe('conquer - Unit tests', () => {
             defendersLost: 1,
             conquered: true
         }
+        game.lastEngagement = engagement;
         game.turnTracker.phase = 'conquer';
         game.countries[engagement.attackingCountry].armies = 5;
         game.countries[engagement.attackingCountry].ownerID = 1;
@@ -86,6 +90,7 @@ describe('conquer - Unit tests', () => {
             defendersLost: 1,
             conquered: true
         }
+        game.lastEngagement = engagement;
         game.turnTracker.phase = 'conquer';
         game.countries[engagement.attackingCountry].armies = 5;
         game.countries[engagement.attackingCountry].ownerID = 0;
@@ -105,6 +110,7 @@ describe('conquer - Unit tests', () => {
             defendersLost: 1,
             conquered: true
         }
+        game.lastEngagement = engagement;
         game.turnTracker.phase = 'conquer';
         game.countries[engagement.attackingCountry].armies = 5;
         game.countries[engagement.attackingCountry].ownerID = 0;
@@ -124,6 +130,7 @@ describe('conquer - Unit tests', () => {
             defendersLost: 1,
             conquered: true
         }
+        game.lastEngagement = engagement;
         game.turnTracker.phase = 'conquer';
         game.countries[engagement.attackingCountry].armies = 3;
         game.countries[engagement.attackingCountry].ownerID = 0;    
@@ -147,7 +154,9 @@ describe('conquer - Unit tests', () => {
             defendingTroopCount: 2,
             attackersLost: 1,
             defendersLost: 1,
+            conquered: true
         }
+        
         game.turnTracker.phase = 'conquer';
         game.countries[engagement.attackingCountry].armies = 5;
         game.countries[engagement.attackingCountry].ownerID = 0;
@@ -171,6 +180,7 @@ describe('conquer - Unit tests', () => {
             defendingTroopCount: 2,
             attackersLost: 1,
             defendersLost: 1,
+            conquered: true
         }
         game.turnTracker.phase = 'conquer';
         game.countries[engagement.attackingCountry].armies = 1;
@@ -195,6 +205,7 @@ describe('conquer - Unit tests', () => {
             defendingTroopCount: 2,
             attackersLost: 1,
             defendersLost: 1,
+            conquered: true
         }
         game.turnTracker.phase = 'conquer';
         game.countries[engagement.attackingCountry].armies = 5;
