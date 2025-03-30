@@ -21,14 +21,14 @@ const northwestTerritory: Country = {
     id: 5,
     name: 'Northwest Territory',
     continent: 'North America',
-    connectedTo: [ 0, 1, 4, 6, 7 ]
+    connectedTo: [ 0, 1, 4, 6 ]
   }
 
 const kamchatka: Country = {
   id: 31,
   name: 'Kamchatka',
   continent: 'Asia',
-  connectedTo: [ 0, 27, 29, 32, 34, 35 ]
+  connectedTo: [ 0, 29, 30, 33, 36 ]
 }
 
   describe('connectedCountries', () => {

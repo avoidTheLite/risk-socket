@@ -69,7 +69,7 @@ function defaultCountrySeed():Country[] {
             id: 2,
             name: 'Central America',
             continent: 'North America',
-            connectedTo: [ 3, 5, 12 ]
+            connectedTo: [ 3, 8, 12 ]
           },
           {
             id: 3,
@@ -87,13 +87,13 @@ function defaultCountrySeed():Country[] {
             id: 5,
             name: 'Northwest Territory',
             continent: 'North America',
-            connectedTo: [ 0, 1, 4, 6, 7 ]
+            connectedTo: [ 0, 1, 4, 6 ]
           },
           {
             id: 6,
             name: 'Ontario',
             continent: 'North America',
-            connectedTo: [ 1, 3, 4, 5, 7 ]
+            connectedTo: [ 1, 3, 4, 5, 7, 8 ]
           },
           {
             id: 7,
@@ -177,7 +177,7 @@ function defaultCountrySeed():Country[] {
             id: 20,
             name: 'Congo',
             continent: 'Africa',
-            connectedTo: [ 21, 22, 23, 24, 25 ]
+            connectedTo: [ 21, 24, 25 ]
           },
           {
             id: 21,
@@ -189,97 +189,97 @@ function defaultCountrySeed():Country[] {
             id: 22,
             name: 'Egypt',
             continent: 'Africa',
-            connectedTo: [ 20, 21, 23, 24, 25 ]
+            connectedTo: [ 17, 21, 24, 32 ]
           },
           {
             id: 23,
             name: 'Madagascar',
             continent: 'Africa',
-            connectedTo: [ 20, 21, 22, 24 ]
+            connectedTo: [ 21, 25 ]
           },
           {
             id: 24,
             name: 'North Africa',
             continent: 'Africa',
-            connectedTo: [ 20, 22, 23, 25 ]
+            connectedTo: [ 10, 17, 19, 20, 21, 22]
           },
           {
             id: 25,
             name: 'South Africa',
             continent: 'Africa',
-            connectedTo: [ 20, 21, 22, 23 ]
+            connectedTo: [ 20, 21, 23 ]
           },
           {
             id: 26,
             name: 'Afghanistan',
             continent: 'Asia',
-            connectedTo: [ 27, 29, 33, 35 ]
+            connectedTo: [ 18, 27, 28, 32, 35 ]
           },
           {
             id: 27,
             name: 'China',
             continent: 'Asia',
-            connectedTo: [ 26, 28, 29, 31, 33, 34 ]
+            connectedTo: [ 26, 28, 33, 34, 35, 37 ]
           },
           {
             id: 28,
             name: 'India',
             continent: 'Asia',
-            connectedTo: [ 27, 29, 30, 32, 34 ]
+            connectedTo: [ 26, 27, 32, 37 ]
           },
           {
             id: 29,
             name: 'Irkutsk',
             continent: 'Asia',
-            connectedTo: [ 26, 27, 28, 30 ]
+            connectedTo: [ 31, 33, 34, 36 ]
           },
           { 
             id: 30,
             name: 'Japan',
             continent: 'Asia',
-            connectedTo: [ 28, 29 ]
+            connectedTo: [ 31, 33 ]
           },
           {
             id: 31,
             name: 'Kamchatka',
             continent: 'Asia',
-            connectedTo: [ 0, 27, 29, 32, 34, 35 ]
+            connectedTo: [ 0, 29, 30, 33, 36 ]
           },
           {
             id: 32,
             name: 'Middle East',
             continent: 'Asia',
-            connectedTo: [ 28, 31, 33, 35 ]
+            connectedTo: [ 17, 18, 22, 26, 28 ]
           },
           {
             id: 33,
             name: 'Mongolia',
             continent: 'Asia',
-            connectedTo: [ 26, 27, 32, 34 ]
+            connectedTo: [ 27, 29, 30, 31, 34 ]
           },
           {
             id: 34,
             name: 'Siberia',
             continent: 'Asia',
-            connectedTo: [ 27, 28, 31, 33, 35 ]
+            connectedTo: [ 27, 29, 33, 35, 36 ]
           },
           {
             id: 35,
             name: 'Ural',
             continent: 'Asia',
-            connectedTo: [ 26, 31, 34 ]
+            connectedTo: [ 18, 26, 27, 34 ]
           },
           {
             id: 36,
             name: 'Yakutsk',
             continent: 'Asia',
-            connectedTo: [ 28, 30, 31 ]
+            connectedTo: [ 29, 31, 34 ]
           },
           {
             id: 37,
             name: 'Siam',
             continent: 'Asia',
-            connectedTo: [ 27, 28, 41 ]
+            connectedTo: [ 27, 28, 39 ]
           },
           {
             id: 38,
@@ -303,7 +303,7 @@ function defaultCountrySeed():Country[] {
             id: 41,
             name: 'Western Australia',
             continent: 'Australia',
-            connectedTo: [ 37, 38 ]
+            connectedTo: [ 38, 39, 40 ]
           }
 ]
 }
