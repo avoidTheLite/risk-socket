@@ -15,7 +15,7 @@ export default async function wsMessageHandler(data: any) {
     let response: WsResponse
     switch(data.action) {       
     case 'newGame':
-        game = await newGame(data.players, data.globeID, data.gameOptions);
+        game = await newGame(data.players, data.globeID, data.gameOptions, (data.saveName) ? data.saveName: '');
         response= {
             data: {
                 action: data.action,

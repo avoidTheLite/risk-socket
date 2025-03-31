@@ -9,7 +9,7 @@ import defaultCardSeed from '../common/util/test/defaultCardSeed';
 
 let uid = new ShortUniqueId({ length: 10 });
 
-async function newGame(players: Player[], globeID: string, gameOptions?: GameOptions) {
+async function newGame(players: Player[], globeID: string, gameOptions?: GameOptions, saveName?: string) {
     try {
         console.log(`loading game with globe ID ${globeID}`)
         let globe: Globe = await loadGlobe(globeID);
@@ -37,7 +37,11 @@ async function newGame(players: Player[], globeID: string, gameOptions?: GameOpt
             cardsAvailable: cards,
             matches: 0    
         }
-        game.saveName = game.id + ' - autosave turn ' + game.turn;
+        if (saveName) {
+            game.saveName = saveName;
+        } else {
+            game.saveName = game.id + ' - autosave turn ' + game.turn;
+        }
         game.countries = await assignCountries(players, globe.countries, gameOptions)
         game.players = await assignArmies(players, globe.countries)
         game = await saveGame(game) 
