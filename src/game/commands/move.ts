@@ -25,7 +25,7 @@ export default async function move(game: Game, movement: Movement): Promise<WsRe
     const response: WsResponse = {
         data: {
             action: 'move',
-            message: `Moved ${movement.armies} armies from ${game.countries[movement.sourceCountry].name} to ${game.countries[movement.targetCountry].name}`,
+            message: `${game.players[game.activePlayerIndex].name} (Player ${game.activePlayerIndex}) has moved ${movement.armies} armies from ${game.countries[movement.sourceCountry].name} to ${game.countries[movement.targetCountry].name}`,
             status: "success",
             movement: movement,
             gameState: game
