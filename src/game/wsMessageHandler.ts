@@ -15,7 +15,7 @@ export default async function wsMessageHandler(data: any) {
     let response: WsResponse
     switch(data.action) {       
     case 'newGame':
-        game = await newGame(data.players, data.globeID, data.gameOptions);
+        game = await newGame(data.players, data.globeID, data.gameOptions, (data.saveName) ? data.saveName: '');
         response= {
             data: {
                 action: data.action,
@@ -37,7 +37,7 @@ export default async function wsMessageHandler(data: any) {
         response = {
             data: {
                 action: data.action,
-                message: `${data.playerName} Deployed ${data.deployment.armies} armies to ${data.deployment.targetCountry}`,
+                message: `${game.players[data.playerID].name} (Player ${data.playerID}) has deployed ${data.deployment.armies} armies to ${game.countries[data.deployment.targetCountry].name}`,
                 status: "success",
                 gameState: game
             }
@@ -54,7 +54,7 @@ export default async function wsMessageHandler(data: any) {
         response = {
             data: {
                 action: data.action,
-                message: `Player ${data.playerID} has ended their turn`,
+                message: `${game.players[data.playerID].name} (Player ${data.playerID}) has ended their turn`,
                 status: "success",
                 gameState: game
             }

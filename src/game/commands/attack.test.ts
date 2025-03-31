@@ -191,8 +191,8 @@ describe('attack - Integration tests', () => {
         await expect(attack(game, engagement)).rejects.toThrow(attackError);
     });
 
-    test('should send victory message after willing the game', async () => {
-        const victoryMessage = "Player 0 has won the game after conquering Alberta!"
+    test('should send victory message after winning the game', async () => {
+        const victoryMessage = "Test Justin (Player 0) has won the game after conquering Alberta!"
         let response: WsResponse
         game.phase = 'play';
         game.turnTracker.phase = 'combat';

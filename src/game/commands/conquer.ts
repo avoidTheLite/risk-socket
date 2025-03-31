@@ -41,7 +41,7 @@ export default async function conquer(game: Game, engagement: Engagement) {
     const response = {
         data: {
             action: 'conquer',
-            message: `Player ${game.activePlayerIndex} has conquered ${game.countries[engagement.defendingCountry].name} with ${engagement.attackingTroopCount} armies from ${game.countries[engagement.attackingCountry].name}. `,
+            message: `${game.players[game.activePlayerIndex].name} (Player ${game.activePlayerIndex}) has conquered ${game.countries[engagement.defendingCountry].name} with ${engagement.attackingTroopCount} armies from ${game.countries[engagement.attackingCountry].name}. `,
             status: "success",
             engagement: engagement,
             gameState: game,

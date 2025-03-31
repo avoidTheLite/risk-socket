@@ -40,14 +40,14 @@ export default async function attack(game: Game, engagement: Engagement): Promis
     if (engagement.conquered) {
         const victory: boolean = victoryCheck(game);
         if (victory) {
-            message = `Player ${game.activePlayerIndex} has won the game after conquering ${game.countries[engagement.defendingCountry].name}!`
+            message = `${game.players[game.activePlayerIndex].name} (Player ${game.activePlayerIndex}) has won the game after conquering ${game.countries[engagement.defendingCountry].name}!`
             game.phase = 'end';
         } else {
-            message = `Player ${game.activePlayerIndex} has defeated ${game.countries[engagement.defendingCountry].name}!`
+            message = `${game.players[game.activePlayerIndex].name} (Player ${game.activePlayerIndex}) has defeated ${game.countries[engagement.defendingCountry].name}!`
         }
     }
     else {
-        message = `Player ${game.activePlayerIndex} has attacked ${game.countries[engagement.defendingCountry].name} with ${engagement.attackingTroopCount} armies from ${game.countries[engagement.attackingCountry].name}. `
+        message = `${game.players[game.activePlayerIndex].name} (Player ${game.activePlayerIndex}) has attacked ${game.countries[engagement.defendingCountry].name} with ${engagement.attackingTroopCount} armies from ${game.countries[engagement.attackingCountry].name}. `
     }
     game.lastEngagement = engagement;
     game = await saveGame(game);

@@ -18,4 +18,12 @@ describe('New game', () => {
         let players = createTestPlayers(globe.playerMax + 1);
         await expect(newGame(players, globe.id)).rejects.toThrow(playerCountError);
     })
+
+    it('should start a new game using optional save name', async () => {
+        let globe = defaultGlobeSeed();
+        let players = createTestPlayers(globe.playerMax);
+        let saveName = 'testSaveName';
+        let game = await newGame(players, globe.id, undefined, saveName);
+        expect(game.saveName).toBe(saveName);
+    })
 })
