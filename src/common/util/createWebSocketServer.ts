@@ -2,6 +2,7 @@ import {WebSocketServer, WebSocket } from 'ws';
 import {Server} from 'http'
 import wsMessageHandler from '../../game/wsMessageHandler';
 import { WsRequest, WsActions, WsResponse, Game } from '../types/types';
+import { updateConnectionList, removeConnection } from './updateConnectionList';
 
 function createWebSocketServer(wsServer: Server) {
     const wss: WebSocketServer = new WebSocketServer({
@@ -28,22 +29,7 @@ function createWebSocketServer(wsServer: Server) {
             }
             const saveName= parsedMessage.data?.saveName;
             if (saveName) {
-                const currentSaveName = socketToGame.get(ws);
-                if (currentSaveName !== saveName) {
-                    console.log(`Socket switched from game ${currentSaveName || 'none'} → ${saveName}`);
-                    if (currentSaveName && gameConnections.has(currentSaveName)) {
-                        gameConnections.get(currentSaveName)!.delete(ws);
-                        if (gameConnections.get(currentSaveName)!.size === 0) {
-                            gameConnections.delete(currentSaveName);
-                        }
-                    }
-                }
-                if(!gameConnections.has(saveName)) {
-                    gameConnections.set(saveName, new Set());
-                }
-                gameConnections.get(saveName)!.add(ws);
-                socketToGame.set(ws, saveName);
-                console.log(`Game ${saveName} has ${gameConnections.get(saveName)!.size} connections`)
+                updateConnectionList(gameConnections, socketToGame, ws, saveName);
             }
 
             try {
@@ -83,14 +69,7 @@ function createWebSocketServer(wsServer: Server) {
         });
         ws.on('close', () => {
             
-            const saveName = socketToGame.get(ws);
-            if (saveName && gameConnections.has(saveName)) {
-                gameConnections.get(saveName)!.delete(ws);
-                if (gameConnections.get(saveName)!.size === 0) {
-                    gameConnections.delete(saveName);
-                }
-            }
-            socketToGame.delete(ws);
+            removeConnection(gameConnections, socketToGame, ws);
             console.log('WebSocket connection closed');
         })        
     });
