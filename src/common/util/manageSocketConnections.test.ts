@@ -10,7 +10,7 @@ const url = `ws://localhost:${port}`;
 describe('Update connection list - unit tests', () => {
 
     let server;
-    const gameConnections = new Map<string, Set<WebSocket>>();
+    const gameToConnections = new Map<string, Set<WebSocket>>();
     const socketToGame = new Map<WebSocket, string>();
     const gameHosts = new Map<string, WebSocket>();
     const playersToClient = new Map<string, Map<number, WebSocket>>();
@@ -28,9 +28,9 @@ describe('Update connection list - unit tests', () => {
         const client: TestWebSocket = new TestWebSocket(url);
         await client.waitUntil('open');
         const testSaveName = 'updateConnectionsList - test Save name 1';
-        updateConnectionList(gameConnections, socketToGame, client, testSaveName);
+        updateConnectionList(gameToConnections, socketToGame, client, testSaveName);
 
-        expect(gameConnections.get(testSaveName).size).toBe(1);
+        expect(gameToConnections.get(testSaveName).size).toBe(1);
         client.close();
         await client.waitUntil('close');
     })
@@ -39,11 +39,11 @@ describe('Update connection list - unit tests', () => {
         const client: TestWebSocket = new TestWebSocket(url);
         await client.waitUntil('open');
         const testSaveName = 'updateConnectionsList - test Save name 1';
-        updateConnectionList(gameConnections, socketToGame, client, testSaveName);
-        expect(gameConnections.get(testSaveName).size).toBe(2);
+        updateConnectionList(gameToConnections, socketToGame, client, testSaveName);
+        expect(gameToConnections.get(testSaveName).size).toBe(2);
         expect(socketToGame.get(client)).toBe(testSaveName);
-        removeConnection(gameConnections, socketToGame, client);
-        expect(gameConnections.get(testSaveName).size).toBe(1);
+        removeConnection(gameToConnections, socketToGame, client);
+        expect(gameToConnections.get(testSaveName).size).toBe(1);
         expect(socketToGame.get(client)).toBeUndefined();
         client.close();
         await client.waitUntil('close');
@@ -54,10 +54,10 @@ describe('Update connection list - unit tests', () => {
         await client.waitUntil('open');
         const testSaveName2 = 'updateConnectionsList - test Save name 2';
         const testSaveName3 = 'updateConnectionsList - test Save name 3';
-        updateConnectionList(gameConnections, socketToGame, client, testSaveName2);
-        expect(gameConnections.get(testSaveName2).size).toBe(1);
-        updateConnectionList(gameConnections, socketToGame, client, testSaveName3);
-        expect(gameConnections.get(testSaveName3).size).toBe(1);
+        updateConnectionList(gameToConnections, socketToGame, client, testSaveName2);
+        expect(gameToConnections.get(testSaveName2).size).toBe(1);
+        updateConnectionList(gameToConnections, socketToGame, client, testSaveName3);
+        expect(gameToConnections.get(testSaveName3).size).toBe(1);
         expect(socketToGame.get(client)).toBe(testSaveName3);
         client.close();
         await client.waitUntil('close');

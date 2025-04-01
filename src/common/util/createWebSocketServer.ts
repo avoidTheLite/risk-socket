@@ -2,8 +2,8 @@ import {WebSocketServer, WebSocket } from 'ws';
 import {Server} from 'http'
 import wsMessageHandler from '../../game/wsMessageHandler';
 import { WsRequest, WsActions, WsResponse, Game } from '../types/types';
-import { updateConnectionList, removeConnection, assignPlayersToClients, removePlayersFromClients, checkAndAssignGameHost } from './manageSocketConnections';
-import saveGame from '../../game/saveGame';
+import { updateConnectionList, handleDisconnect, checkAndAssignGameHost } from './manageSocketConnections';
+
 
 function createWebSocketServer(wsServer: Server) {
     const wss: WebSocketServer = new WebSocketServer({
@@ -11,7 +11,7 @@ function createWebSocketServer(wsServer: Server) {
         // path: '/game'
     })
 
-    const gameConnections = new Map<string, Set<WebSocket>>();
+    const gameToConnections = new Map<string, Set<WebSocket>>();
     const socketToGame = new Map<WebSocket, string>();
     const gameHosts = new Map<string, WebSocket>();
     const playersToClient = new Map<string, Map<number, WebSocket>>();
@@ -34,7 +34,7 @@ function createWebSocketServer(wsServer: Server) {
             }
             const saveName= parsedMessage.data?.saveName;
             if (saveName) {
-                updateConnectionList(gameConnections, socketToGame, ws, saveName);
+                updateConnectionList(gameToConnections, socketToGame, ws, saveName);
                 checkAndAssignGameHost(gameHosts, ws, saveName);
             }
 
@@ -45,7 +45,7 @@ function createWebSocketServer(wsServer: Server) {
                 ) {
                     const response: WsResponse = await wsMessageHandler(parsedMessage.data);
                     if (response.data.status === 'success' && saveName){
-                        gameConnections.get(saveName)!.forEach(connection => {
+                        gameToConnections.get(saveName)!.forEach(connection => {
                             if (connection !== ws && connection.readyState === WebSocket.OPEN) {
                                 connection.send(JSON.stringify(response));
                             }
@@ -74,25 +74,7 @@ function createWebSocketServer(wsServer: Server) {
             }
         });
         ws.on('close', () => {
-            const saveName = socketToGame.get(ws);
-            removeConnection(gameConnections, socketToGame, ws);
-            const assignment = clientToPlayers.get(ws);
-            let playerIDs: number[] = assignment?.playerIDs ?? [];
-            if (assignment) {
-                removePlayersFromClients(playersToClient, clientToPlayers, ws, saveName, playerIDs);
-            }
-            const connections = gameConnections.get(saveName);
-            const isHost = gameHosts.get(saveName) === ws;
-            if (connections && connections.size > 0) {
-                if (isHost) {
-                    gameHosts.delete(saveName);
-                    const newHost: WebSocket = connections.values().next().value;
-                    checkAndAssignGameHost(gameHosts, newHost, saveName);
-                    assignPlayersToClients(playersToClient, clientToPlayers, gameHosts.get(saveName), saveName, playerIDs);
-                };
-            } else {
-                gameHosts.delete(saveName);
-            }
+            handleDisconnect(gameToConnections, socketToGame, playersToClient, clientToPlayers, gameHosts, ws);
             console.log('WebSocket connection closed');
         });        
     });
