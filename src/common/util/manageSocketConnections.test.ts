@@ -1,7 +1,7 @@
 import { WebSocket } from "ws";
 import { startServer, TestWebSocket } from "./test/webSocketTestUtils";
 import { describe, test, expect, beforeAll, afterAll, it } from '@jest/globals';
-import { updateConnectionList, removeConnection, assignPlayersToClients, removePlayersFromClients, checkAndAssignGameHost } from "./updateConnectionList";
+import { updateConnectionList, removeConnection, assignPlayersToClients, removePlayersFromClients, checkAndAssignGameHost } from "./manageSocketConnections";
 import { promises } from "dns";
 
 const port = 8080;

@@ -2,7 +2,7 @@ import {WebSocketServer, WebSocket } from 'ws';
 import {Server} from 'http'
 import wsMessageHandler from '../../game/wsMessageHandler';
 import { WsRequest, WsActions, WsResponse, Game } from '../types/types';
-import { updateConnectionList, removeConnection, assignPlayersToClients, removePlayersFromClients, checkAndAssignGameHost } from './updateConnectionList';
+import { updateConnectionList, removeConnection, assignPlayersToClients, removePlayersFromClients, checkAndAssignGameHost } from './manageSocketConnections';
 import saveGame from '../../game/saveGame';
 
 function createWebSocketServer(wsServer: Server) {
