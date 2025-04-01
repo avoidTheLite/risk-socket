@@ -67,17 +67,13 @@ export function removePlayersFromClients(
         playersToClient.get(saveName).delete(playerIDs[i]);
     }
     const currentPlayersAssigned = clientToPlayers.get(ws).playerIDs;
-    console.log(currentPlayersAssigned)
     let tempPlayersAssigned = [...currentPlayersAssigned];
     for (let i=0; i<currentPlayersAssigned.length; i++) {
         if (playerIDs.includes(currentPlayersAssigned[i])) {
-            console.log(`i = ${i}, removing ${currentPlayersAssigned[i]}`)
             tempPlayersAssigned.splice(tempPlayersAssigned.indexOf(currentPlayersAssigned[i]), 1);
-            console.log(`i = ${i}, tempPlayersAssigned ${tempPlayersAssigned[i]}`)
         }
     }
-    console.log(tempPlayersAssigned)
-    if (currentPlayersAssigned.length === 0) {
+    if (tempPlayersAssigned.length === 0) {
         clientToPlayers.delete(ws);
     } else {
         clientToPlayers.set(ws, {saveName: saveName, playerIDs: tempPlayersAssigned});

@@ -3,6 +3,7 @@ import {Server} from 'http'
 import wsMessageHandler from '../../game/wsMessageHandler';
 import { WsRequest, WsActions, WsResponse, Game } from '../types/types';
 import { updateConnectionList, removeConnection, assignPlayersToClients, removePlayersFromClients, checkAndAssignGameHost } from './updateConnectionList';
+import saveGame from '../../game/saveGame';
 
 function createWebSocketServer(wsServer: Server) {
     const wss: WebSocketServer = new WebSocketServer({
@@ -73,10 +74,27 @@ function createWebSocketServer(wsServer: Server) {
             }
         });
         ws.on('close', () => {
-            
+            const saveName = socketToGame.get(ws);
             removeConnection(gameConnections, socketToGame, ws);
+            const assignment = clientToPlayers.get(ws);
+            let playerIDs: number[] = assignment?.playerIDs ?? [];
+            if (assignment) {
+                removePlayersFromClients(playersToClient, clientToPlayers, ws, saveName, playerIDs);
+            }
+            const connections = gameConnections.get(saveName);
+            const isHost = gameHosts.get(saveName) === ws;
+            if (connections && connections.size > 0) {
+                if (isHost) {
+                    gameHosts.delete(saveName);
+                    const newHost: WebSocket = connections.values().next().value;
+                    checkAndAssignGameHost(gameHosts, newHost, saveName);
+                    assignPlayersToClients(playersToClient, clientToPlayers, gameHosts.get(saveName), saveName, playerIDs);
+                };
+            } else {
+                gameHosts.delete(saveName);
+            }
             console.log('WebSocket connection closed');
-        })        
+        });        
     });
     return wss;
 }
