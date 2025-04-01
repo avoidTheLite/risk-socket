@@ -38,4 +38,58 @@ export function updateConnectionList(
     socketToGame.set(ws, saveName);
     console.log(`Game ${saveName} has ${gameConnections.get(saveName)!.size} connections`)
 }
-  
+
+export function assignPlayersToClients(
+    playersToClient: Map<string, Map<number, WebSocket>>,
+    clientToPlayers: Map<WebSocket, {saveName: string, playerIDs:number[]}>,
+    ws: WebSocket,
+    saveName: string,
+    playerIDs: number[],
+) {
+    if (!playersToClient.has(saveName)) {
+        playersToClient.set(saveName, new Map());
+    }
+    for (let i=0; i<playerIDs.length; i++) {
+        playersToClient.get(saveName).set(playerIDs[i], ws);
+    }
+    clientToPlayers.set(ws, {saveName: saveName, playerIDs: playerIDs});
+
+}
+
+export function removePlayersFromClients(
+    playersToClient: Map<string, Map<number, WebSocket>>,
+    clientToPlayers: Map<WebSocket, {saveName: string, playerIDs:number[]}>,
+    ws: WebSocket,
+    saveName: string,
+    playerIDs: number[],
+) {
+    for (let i=0; i<playerIDs.length; i++) {
+        playersToClient.get(saveName).delete(playerIDs[i]);
+    }
+    const currentPlayersAssigned = clientToPlayers.get(ws).playerIDs;
+    console.log(currentPlayersAssigned)
+    let tempPlayersAssigned = [...currentPlayersAssigned];
+    for (let i=0; i<currentPlayersAssigned.length; i++) {
+        if (playerIDs.includes(currentPlayersAssigned[i])) {
+            console.log(`i = ${i}, removing ${currentPlayersAssigned[i]}`)
+            tempPlayersAssigned.splice(tempPlayersAssigned.indexOf(currentPlayersAssigned[i]), 1);
+            console.log(`i = ${i}, tempPlayersAssigned ${tempPlayersAssigned[i]}`)
+        }
+    }
+    console.log(tempPlayersAssigned)
+    if (currentPlayersAssigned.length === 0) {
+        clientToPlayers.delete(ws);
+    } else {
+        clientToPlayers.set(ws, {saveName: saveName, playerIDs: tempPlayersAssigned});
+    }
+}
+
+export function checkAndAssignGameHost(
+    gameHosts: Map<string, WebSocket>,
+    ws: WebSocket,
+    saveName: string
+) {
+    if (!gameHosts.has(saveName)) {
+        gameHosts.set(saveName, ws);
+    }
+}

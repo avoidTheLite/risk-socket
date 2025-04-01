@@ -2,7 +2,7 @@ import {WebSocketServer, WebSocket } from 'ws';
 import {Server} from 'http'
 import wsMessageHandler from '../../game/wsMessageHandler';
 import { WsRequest, WsActions, WsResponse, Game } from '../types/types';
-import { updateConnectionList, removeConnection } from './updateConnectionList';
+import { updateConnectionList, removeConnection, assignPlayersToClients, removePlayersFromClients, checkAndAssignGameHost } from './updateConnectionList';
 
 function createWebSocketServer(wsServer: Server) {
     const wss: WebSocketServer = new WebSocketServer({
@@ -12,6 +12,10 @@ function createWebSocketServer(wsServer: Server) {
 
     const gameConnections = new Map<string, Set<WebSocket>>();
     const socketToGame = new Map<WebSocket, string>();
+    const gameHosts = new Map<string, WebSocket>();
+    const playersToClient = new Map<string, Map<number, WebSocket>>();
+    const clientToPlayers = new Map<WebSocket, {saveName: string, playerIDs: number[]}>();
+
     
     wss.on('connection', (ws: WebSocket) => {
         ws.send('...connected to risk server')
@@ -30,6 +34,7 @@ function createWebSocketServer(wsServer: Server) {
             const saveName= parsedMessage.data?.saveName;
             if (saveName) {
                 updateConnectionList(gameConnections, socketToGame, ws, saveName);
+                checkAndAssignGameHost(gameHosts, ws, saveName);
             }
 
             try {
