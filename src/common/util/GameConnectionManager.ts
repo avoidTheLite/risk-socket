@@ -66,18 +66,26 @@ class GameConnectionManager {
             this.gameHosts.set(saveName, ws);
         }
     }
-
-    getPlayers(
-        ws: WebSocket
-    ): number[] | [] {
-        return this.clientToPlayers.get(ws)?.playerIDs ?? [];
-    }
+    
     promoteNewHost(
         newHost: WebSocket,
         saveName: string
     ): void {
         this.gameHosts.delete(saveName);
         this.assignGameHostIfNone(newHost, saveName);
+    }
+
+    getPlayers(
+        ws: WebSocket
+    ): number[] | [] {
+        return this.clientToPlayers.get(ws)?.playerIDs ?? [];
+    }
+
+    getOwner(
+        saveName: string,
+        playerID: number
+    ) {
+        return this.playersToClient.get(saveName).get(playerID);
     }
 
     assignPlayersToClient(
@@ -120,7 +128,10 @@ class GameConnectionManager {
         saveName: string,
         playerIDs: number[]
     ): void {
-        this.removePlayersFromClient(ws, saveName, playerIDs);
+        for (let i=0; i<playerIDs.length; i++){
+            this.removePlayersFromClient(this.getOwner(saveName, playerIDs[i]), saveName, playerIDs);
+            console.log(`Removed player ${playerIDs[i]}`)
+        }
         this.assignPlayersToClient(ws, saveName, playerIDs);
         console.log(`Reassigned players ${playerIDs.join(', ')}`);
     
@@ -137,7 +148,7 @@ class GameConnectionManager {
         const connections = this.gameToConnections.get(saveName);
         const isHost = this.gameHosts.get(saveName) === ws;
         
-        if (connections && connections.size > 0) {
+        if (connections && connections.size > 1) {
             if (isHost) {
                 const newHost: WebSocket = connections.values().next().value;
                 this.promoteNewHost(newHost, saveName);
