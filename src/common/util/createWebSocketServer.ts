@@ -2,7 +2,7 @@ import {WebSocketServer, WebSocket } from 'ws';
 import {Server} from 'http'
 import wsMessageHandler from '../../game/wsMessageHandler';
 import { WsRequest, WsActions, WsResponse, Game } from '../types/types';
-import { updateConnectionList, handleDisconnect, checkAndAssignGameHost } from './manageSocketConnections';
+import GameConnectionManager from './GameConnectionManager';
 
 
 function createWebSocketServer(wsServer: Server) {
@@ -10,12 +10,7 @@ function createWebSocketServer(wsServer: Server) {
         server: wsServer,
         // path: '/game'
     })
-
-    const gameToConnections = new Map<string, Set<WebSocket>>();
-    const socketToGame = new Map<WebSocket, string>();
-    const gameHosts = new Map<string, WebSocket>();
-    const playersToClient = new Map<string, Map<number, WebSocket>>();
-    const clientToPlayers = new Map<WebSocket, {saveName: string, playerIDs: number[]}>();
+    const manager = new GameConnectionManager();
 
     
     wss.on('connection', (ws: WebSocket) => {
@@ -34,8 +29,8 @@ function createWebSocketServer(wsServer: Server) {
             }
             const saveName= parsedMessage.data?.saveName;
             if (saveName) {
-                updateConnectionList(gameToConnections, socketToGame, ws, saveName);
-                checkAndAssignGameHost(gameHosts, ws, saveName);
+                manager.updateConnection(ws, saveName);
+                manager.assignGameHostIfNone(ws, saveName);
             }
 
             try {
@@ -45,7 +40,7 @@ function createWebSocketServer(wsServer: Server) {
                 ) {
                     const response: WsResponse = await wsMessageHandler(parsedMessage.data);
                     if (response.data.status === 'success' && saveName){
-                        gameToConnections.get(saveName)!.forEach(connection => {
+                        manager.getConnections(saveName).forEach(connection => {
                             if (connection !== ws && connection.readyState === WebSocket.OPEN) {
                                 connection.send(JSON.stringify(response));
                             }
@@ -74,7 +69,7 @@ function createWebSocketServer(wsServer: Server) {
             }
         });
         ws.on('close', () => {
-            handleDisconnect(gameToConnections, socketToGame, playersToClient, clientToPlayers, gameHosts, ws);
+            manager.handleDisconnect(ws);
             console.log('WebSocket connection closed');
         });        
     });

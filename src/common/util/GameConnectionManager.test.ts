@@ -1,7 +1,7 @@
 import { WebSocket } from "ws";
 import { startServer, TestWebSocket } from "./test/webSocketTestUtils";
 import { describe, test, expect, beforeAll, afterAll, it } from '@jest/globals';
-import { updateConnectionList, removeConnection, assignPlayersToClients, removePlayersFromClients, checkAndAssignGameHost } from "./manageSocketConnections";
+import GameConnectionManager from "./GameConnectionManager";
 import { promises } from "dns";
 
 const port = 8080;
@@ -10,11 +10,8 @@ const url = `ws://localhost:${port}`;
 describe('Update connection list - unit tests', () => {
 
     let server;
-    const gameToConnections = new Map<string, Set<WebSocket>>();
-    const socketToGame = new Map<WebSocket, string>();
-    const gameHosts = new Map<string, WebSocket>();
-    const playersToClient = new Map<string, Map<number, WebSocket>>();
-    const clientToPlayers = new Map<WebSocket, {saveName: string, playerIDs: number[]}>();
+    const manager = new GameConnectionManager();
+
 
     beforeAll(async () => {
         server = await startServer(port);
@@ -28,9 +25,8 @@ describe('Update connection list - unit tests', () => {
         const client: TestWebSocket = new TestWebSocket(url);
         await client.waitUntil('open');
         const testSaveName = 'updateConnectionsList - test Save name 1';
-        updateConnectionList(gameToConnections, socketToGame, client, testSaveName);
-
-        expect(gameToConnections.get(testSaveName).size).toBe(1);
+        manager.updateConnection(client, testSaveName);
+        expect(manager.getConnections(testSaveName).length).toBe(1);
         client.close();
         await client.waitUntil('close');
     })
@@ -39,12 +35,12 @@ describe('Update connection list - unit tests', () => {
         const client: TestWebSocket = new TestWebSocket(url);
         await client.waitUntil('open');
         const testSaveName = 'updateConnectionsList - test Save name 1';
-        updateConnectionList(gameToConnections, socketToGame, client, testSaveName);
-        expect(gameToConnections.get(testSaveName).size).toBe(2);
-        expect(socketToGame.get(client)).toBe(testSaveName);
-        removeConnection(gameToConnections, socketToGame, client);
-        expect(gameToConnections.get(testSaveName).size).toBe(1);
-        expect(socketToGame.get(client)).toBeUndefined();
+        manager.updateConnection(client, testSaveName);
+        expect(manager.getConnections(testSaveName).length).toBe(2);
+        expect(manager.getGame(client)).toBe(testSaveName);
+        manager.removeConnection(client);
+        expect(manager.getConnections(testSaveName).length).toBe(1);
+        expect(manager.getGame(client)).toBeUndefined();
         client.close();
         await client.waitUntil('close');
     })
@@ -54,11 +50,11 @@ describe('Update connection list - unit tests', () => {
         await client.waitUntil('open');
         const testSaveName2 = 'updateConnectionsList - test Save name 2';
         const testSaveName3 = 'updateConnectionsList - test Save name 3';
-        updateConnectionList(gameToConnections, socketToGame, client, testSaveName2);
-        expect(gameToConnections.get(testSaveName2).size).toBe(1);
-        updateConnectionList(gameToConnections, socketToGame, client, testSaveName3);
-        expect(gameToConnections.get(testSaveName3).size).toBe(1);
-        expect(socketToGame.get(client)).toBe(testSaveName3);
+        manager.updateConnection(client, testSaveName2);
+        expect(manager.getConnections(testSaveName2).length).toBe(1);
+        manager.updateConnection(client, testSaveName3);
+        expect(manager.getConnections(testSaveName3).length).toBe(1);
+        expect(manager.getGame(client)).toBe(testSaveName3);
         client.close();
         await client.waitUntil('close');
     })
@@ -68,9 +64,8 @@ describe('Update connection list - unit tests', () => {
         await client.waitUntil('open');
         const testSaveName = 'updateConnectionsList - test Save name 4';
         const playerIDs = [0, 1, 2, 3, 4];
-        assignPlayersToClients(playersToClient, clientToPlayers, client, testSaveName, playerIDs);
-        expect(playersToClient.get(testSaveName).size).toBe(5);
-        expect(clientToPlayers.get(client).playerIDs).toEqual(playerIDs);
+        manager.assignPlayersToClient(client, testSaveName, playerIDs);
+        expect(manager.getPlayers(client)).toEqual(playerIDs);
         client.close();
         await client.waitUntil('close');
     })
@@ -80,12 +75,10 @@ describe('Update connection list - unit tests', () => {
         await client.waitUntil('open');
         const testSaveName = 'updateConnectionsList - test Save name 5';
         const playerIDs = [0, 1, 2, 3, 4];
-        assignPlayersToClients(playersToClient, clientToPlayers, client, testSaveName, playerIDs);
-        expect(playersToClient.get(testSaveName).size).toBe(5);
-        expect(clientToPlayers.get(client).playerIDs).toEqual(playerIDs);
-        removePlayersFromClients(playersToClient, clientToPlayers, client, testSaveName, playerIDs);
-        expect(playersToClient.get(testSaveName).size).toBe(0);
-        expect(clientToPlayers.get(client).playerIDs.length).toBe(0);
+        manager.assignPlayersToClient(client, testSaveName, playerIDs);
+        expect(manager.getPlayers(client)).toEqual(playerIDs);
+        manager.removePlayersFromClient(client, testSaveName, playerIDs);
+        expect(manager.getPlayers(client).length).toBe(0);
         client.close();
         await client.waitUntil('close');
     })
@@ -97,11 +90,12 @@ describe('Update connection list - unit tests', () => {
 
         const testSaveName = 'updateConnectionsList - test Save name 6';
         const playerIDs = [0, 1, 2, 3, 4];
-        checkAndAssignGameHost(gameHosts, client, testSaveName);
-        expect(gameHosts.get(testSaveName)).toBe(client);
-        checkAndAssignGameHost(gameHosts, client2, testSaveName);
-        expect(gameHosts.get(testSaveName)).toBe(client);
+        manager.assignGameHostIfNone(client, testSaveName);
+        expect(manager.getHost(testSaveName)).toBe(client);
+        manager.assignGameHostIfNone(client2, testSaveName);
+        expect(manager.getHost(testSaveName)).toBe(client);
         client.close();
         client2.close()
+        await Promise.all([client.waitUntil('close'), client2.waitUntil('close')]);
     })
 })
