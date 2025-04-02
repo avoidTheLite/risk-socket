@@ -7,7 +7,7 @@ import { promises } from "dns";
 const port = 8080;
 const url = `ws://localhost:${port}`;
 
-describe('Update connection list - unit tests', () => {
+describe('GameConnectionManager - Integration tests', () => {
 
     let server;
     const manager = new GameConnectionManager();
