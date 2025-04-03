@@ -2,9 +2,9 @@ import createMockSocket from "./test/createMockSocket";
 import GameConnectionManager from "./GameConnectionManager";
 import { WebSocket } from "ws";
 
+let manager: GameConnectionManager;
+let ws: WebSocket;
 describe('GameConnectionManager - Unit tests', () => {
-    let manager: GameConnectionManager;
-    let ws: WebSocket;
 
     beforeAll(() => {
         ws = createMockSocket();
@@ -36,7 +36,7 @@ describe('GameConnectionManager - Unit tests', () => {
         expect(manager.getConnections(testSaveName)).toContain(ws);
         manager.removeConnection(ws);
         expect(manager.getConnections(testSaveName)).not.toContain(ws);
-        expect(manager.getConnections(testSaveName).length).toBe(0);
+        expect(manager.getConnections(testSaveName)).toHaveLength(0);
     })
 
     test('assigns a game host if there is no game host yet', () => {
@@ -93,46 +93,83 @@ describe('GameConnectionManager - Unit tests', () => {
         const ws2 = createMockSocket();
         const playerIDs = [0, 1, 2, 3, 4];
         const reassignedPlayerIDs = [2, 3];
+        manager.openGame(testSaveName, reassignedPlayerIDs);
         manager.assignPlayersToClient(ws, testSaveName, playerIDs);
         manager.reassignPlayers(ws2, testSaveName, reassignedPlayerIDs);
         expect(manager.getPlayers(ws)).not.toEqual(expect.arrayContaining(reassignedPlayerIDs));
         expect(manager.getPlayers(ws2)).toEqual(expect.arrayContaining(reassignedPlayerIDs));
     })
+})
 
-    test('Successfully disconnects a client from the game', () => {
-        const testSaveName = 'updateConnectionsList - test Save name 1';
-        const ws2 = createMockSocket();
-        const hostPlayerIDs = [0, 1, 2];
-        const ws2PlayerIDs = [3, 4];
+describe('GameConnectionManager - Disconnect unit tests', () => {
+
+    let testSaveName;
+    let ws;
+    let ws2;
+    let hostPlayerIDs;
+    let ws2PlayerIDs;
+    beforeAll(() => {
+    })
+    
+    beforeEach(() => {
+        ws = createMockSocket();
+        manager = new GameConnectionManager();
+        testSaveName = 'updateConnectionsList - test Save name 1';
+        ws2 = createMockSocket();
+        hostPlayerIDs = [0, 1, 2];
+        ws2PlayerIDs = [3, 4];
         manager.updateConnection(ws, testSaveName);
         manager.assignGameHostIfNone(ws, testSaveName);
         manager.updateConnection(ws2, testSaveName);
         manager.assignPlayersToClient(ws, testSaveName, hostPlayerIDs);
         manager.assignPlayersToClient(ws2, testSaveName, ws2PlayerIDs);
-        expect(manager.getPlayers(ws)).toEqual(hostPlayerIDs);
-        expect(manager.getPlayers(ws2)).toEqual(ws2PlayerIDs);
+    })
+    test('reassigns players when client disconnects', () => {
+        
         manager.handleDisconnect(ws2);
-        expect(manager.getPlayers(ws2).length).toEqual(0);
+        expect(manager.getPlayers(ws2)).toHaveLength(0);
         expect(manager.getPlayers(ws)).toEqual(expect.arrayContaining(hostPlayerIDs))
         expect(manager.getPlayers(ws)).toEqual(expect.arrayContaining(ws2PlayerIDs))
     })
 
-    test('Successfully promotes new host when host client disconnects', () => {
-        const testSaveName = 'updateConnectionsList - test Save name 1';
-        const ws2 = createMockSocket();
-        const hostPlayerIDs = [0, 1, 2];
-        const ws2PlayerIDs = [3, 4];
-        manager.updateConnection(ws, testSaveName);
-        manager.assignGameHostIfNone(ws, testSaveName);
-        manager.updateConnection(ws2, testSaveName);
-        manager.assignPlayersToClient(ws, testSaveName, hostPlayerIDs);
-        manager.assignPlayersToClient(ws2, testSaveName, ws2PlayerIDs);
-        expect(manager.getPlayers(ws)).toEqual(hostPlayerIDs);
-        expect(manager.getPlayers(ws2)).toEqual(ws2PlayerIDs);
+    test('promotes new host when host client disconnects', () => {
+
         manager.handleDisconnect(ws);
-        expect(manager.getPlayers(ws).length).toEqual(0);
         expect(manager.getHost(testSaveName)).toBe(ws2);
 
     })
 
+    test('reassigns players to new host when the host client disconnects', () => {
+
+
+        manager.handleDisconnect(ws);
+        expect(manager.getPlayers(ws)).toHaveLength(0);
+    })
+
+    
+
+})
+
+describe('GameConnectionManager - Open Game unit tests', () => {
+
+    beforeAll(() => {
+        ws = createMockSocket();
+    })
+
+    beforeEach(() => {
+        manager = new GameConnectionManager();
+    })
+
+    test('Successfully opens an existing game', () => {
+        const testSaveName = 'updateConnectionsList - test Save name 1';
+        manager.assignGameHostIfNone(ws, testSaveName);
+        const hostPlayerIDs = [0, 1, 2, 3, 4];
+        const playersToOpen = [3, 4];
+        manager.openGame(testSaveName, playersToOpen);
+        const expectedOpenGame = {
+            saveName: testSaveName,
+            playerIDs: playersToOpen
+        }
+        expect(manager.getOpenGames()).toContainEqual(expectedOpenGame);
+    })
 })

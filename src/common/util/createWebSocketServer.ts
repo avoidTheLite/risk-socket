@@ -27,11 +27,6 @@ function createWebSocketServer(wsServer: Server) {
                 ws.send(JSON.stringify({ error: 'Unable to parse message' }));
                 return
             }
-            const saveName= parsedMessage.data?.saveName;
-            if (saveName) {
-                manager.updateConnection(ws, saveName);
-                manager.assignGameHostIfNone(ws, saveName);
-            }
 
             try {
                 if (parsedMessage.data &&
@@ -39,7 +34,10 @@ function createWebSocketServer(wsServer: Server) {
                     isValidAction(parsedMessage.data.action)
                 ) {
                     const response: WsResponse = await wsMessageHandler(parsedMessage.data);
+                    const saveName: string = response.data.gameState?.saveName;
                     if (response.data.status === 'success' && saveName){
+                        manager.updateConnection(ws, saveName);
+                        manager.assignGameHostIfNone(ws, saveName);
                         manager.getConnections(saveName).forEach(connection => {
                             if (connection !== ws && connection.readyState === WebSocket.OPEN) {
                                 connection.send(JSON.stringify(response));

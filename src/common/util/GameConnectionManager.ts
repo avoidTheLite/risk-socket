@@ -6,6 +6,7 @@ class GameConnectionManager {
     private gameHosts = new Map<string, WebSocket>();
     private playersToClient = new Map<string, Map<number, WebSocket>>();
     private clientToPlayers = new Map<WebSocket, {saveName: string, playerIDs: number[]}>();
+    private openGameSlots = new Map<string, number[]>();
 
     getConnections(
         saveName: string
@@ -84,8 +85,8 @@ class GameConnectionManager {
     getOwner(
         saveName: string,
         playerID: number
-    ) {
-        return this.playersToClient.get(saveName).get(playerID);
+    ): WebSocket | undefined {
+        return this.playersToClient.get(saveName)?.get(playerID);
     }
 
     assignPlayersToClient(
@@ -128,13 +129,70 @@ class GameConnectionManager {
         saveName: string,
         playerIDs: number[]
     ): void {
-        for (let i=0; i<playerIDs.length; i++){
-            this.removePlayersFromClient(this.getOwner(saveName, playerIDs[i]), saveName, playerIDs);
-            console.log(`Removed player ${playerIDs[i]}`)
+        console.log(`Attempting to reassign players ${playerIDs.join(', ')} in game ${saveName}`)
+        const openPlayerSlots = this.getOpenGameSlots(saveName);
+        const playersToReassign = playerIDs.filter((id) => openPlayerSlots.includes(id));
+        console.log(`Reassigning players ${playersToReassign.join(', ')} in game ${saveName}`)
+        const invalidReassignments = playerIDs.filter((id) => !openPlayerSlots.includes(id));
+        for (let i=0; i<playersToReassign.length; i++){
+            this.removePlayersFromClient(this.getOwner(saveName, playersToReassign[i]), saveName, [playersToReassign[i]]);
+            console.log(`Removed player ${playersToReassign[i]}`)
         }
-        this.assignPlayersToClient(ws, saveName, playerIDs);
+        this.assignPlayersToClient(ws, saveName, playersToReassign);
+        if (invalidReassignments.length > 0) console.log(`Could not reassign these players, they are not Open! - ${invalidReassignments.join(', ')}`);
         console.log(`Reassigned players ${playerIDs.join(', ')}`);
     
+    }
+
+    getOpenGames(): {
+        saveName: string,
+        playerIDs: number[]
+    }[] {
+        const entries = [...this.openGameSlots.entries()];
+        return entries.map(([saveName, playerIDs]) => ({saveName, playerIDs}));
+    }
+
+    getOpenGameSlots(
+        saveName: string
+    ): number[] {
+        return this.openGameSlots.get(saveName) ?? [];
+    }
+    openGame(
+        saveName: string,
+        playerIDs: number[]
+    ): void {
+        const currentOpenPlayers = this.openGameSlots.get(saveName) ?? [];
+        const newOpenPlayers = [...new Set<number>([...currentOpenPlayers, ...playerIDs])];
+        this.openGameSlots.set(saveName, newOpenPlayers);
+    }
+
+    closeGameSlots(
+        saveName: string,
+        playerIDs: number[]
+    ): void {
+        const currentOpenPlayers = this.openGameSlots.get(saveName) ?? [];
+        const newOpenPlayers = currentOpenPlayers.filter((id) => !playerIDs.includes(id));
+        const invalidPlayerIDs = playerIDs.filter((id) => !currentOpenPlayers.includes(id));
+        if (invalidPlayerIDs.length > 0) {
+            console.log('Invalid player IDs: they are not open for this game: ', invalidPlayerIDs);
+        }
+        this.openGameSlots.set(saveName, newOpenPlayers);
+    }
+    connectToGame(
+        ws: WebSocket,
+        saveName: string,
+        playerIDs: number[]
+    ): void {
+        this.updateConnection(ws, saveName);
+        if (this.getHost(saveName)) {
+
+            this.reassignPlayers(ws, saveName, playerIDs);
+            this.closeGameSlots(saveName, playerIDs);
+        } else {
+            this.assignGameHostIfNone(ws, saveName);
+            this.assignPlayersToClient(ws, saveName, playerIDs);
+
+        }
     }
 
     handleDisconnect(
@@ -147,17 +205,19 @@ class GameConnectionManager {
         let playerIDs: number[] = assignments?.playerIDs ?? [];
         const connections = this.gameToConnections.get(saveName);
         const isHost = this.gameHosts.get(saveName) === ws;
-        
-        if (connections && connections.size > 1) {
+        console.log(`Game ${saveName} has ${connections?.size} connections`);
+        this.removeConnection(ws);
+        if (connections && connections.size > 0) {
             if (isHost) {
                 const newHost: WebSocket = connections.values().next().value;
                 this.promoteNewHost(newHost, saveName);
+                console.log('Promoting new host')
             };
             if (assignments) {
+                this.openGame(saveName, playerIDs);
                 this.reassignPlayers(this.gameHosts.get(saveName), saveName, playerIDs);
             }
         } else {
-            this.removeConnection(ws);
             this.gameHosts.delete(saveName);
             if (assignments) {
                 this.removePlayersFromClient(ws, saveName, playerIDs);
