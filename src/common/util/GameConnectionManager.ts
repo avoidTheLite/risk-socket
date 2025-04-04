@@ -219,6 +219,7 @@ class GameConnectionManager {
             }
         } else {
             this.gameHosts.delete(saveName);
+            this.openGameSlots.delete(saveName);
             if (assignments) {
                 this.removePlayersFromClient(ws, saveName, playerIDs);
             }

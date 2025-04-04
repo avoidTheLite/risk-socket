@@ -9,6 +9,7 @@ import cardMatch from "./commands/cardMatch";
 import conquer from "./commands/conquer";
 import move from "./commands/move";
 import availableCommands from "./commands/availableCommands";
+import openGame from "./commands/openGame";
 
 export default async function wsMessageHandler(data: any) {
     let game: Game
@@ -100,6 +101,10 @@ export default async function wsMessageHandler(data: any) {
     case 'availableCommands':
         game = await loadGame(data.saveName);
         response = await availableCommands(game, data.playerID);
+        return response
+    case 'openGame':
+        game = await loadGame(data.saveName);
+        response = openGame(game, data.playerSlots);
         return response
     case 'echo':
         response = {

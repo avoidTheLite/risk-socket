@@ -5,12 +5,12 @@ import { WsRequest, WsActions, WsResponse, Game } from '../types/types';
 import GameConnectionManager from './GameConnectionManager';
 
 
+const manager = new GameConnectionManager();
 function createWebSocketServer(wsServer: Server) {
     const wss: WebSocketServer = new WebSocketServer({
         server: wsServer,
         // path: '/game'
     })
-    const manager = new GameConnectionManager();
 
     
     wss.on('connection', (ws: WebSocket) => {
@@ -78,4 +78,5 @@ function isValidAction(action: WsActions) {
     return Object.values(WsActions).includes(action);
 }
 
+export { manager };
 export default createWebSocketServer

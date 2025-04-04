@@ -146,7 +146,14 @@ describe('GameConnectionManager - Disconnect unit tests', () => {
         expect(manager.getPlayers(ws)).toHaveLength(0);
     })
 
-    
+    test('removes game from open games when all clients disconnect', () => {
+        const slotsToOpen = [2];
+        manager.openGame(testSaveName, slotsToOpen);
+        manager.handleDisconnect(ws2);
+        manager.handleDisconnect(ws);
+        const openSaveGames = manager.getOpenGames().map((game) => game.saveName);
+        expect(openSaveGames).not.toContain(testSaveName);
+    })
 
 })
 
