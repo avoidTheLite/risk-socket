@@ -9,13 +9,14 @@ import cardMatch from "./commands/cardMatch";
 import conquer from "./commands/conquer";
 import move from "./commands/move";
 import availableCommands from "./commands/availableCommands";
+import openGame from "./commands/openGame";
 
 export default async function wsMessageHandler(data: any) {
     let game: Game
     let response: WsResponse
     switch(data.action) {       
     case 'newGame':
-        game = await newGame(data.players, data.globeID, data.gameOptions, (data.saveName) ? data.saveName: '');
+        game = await newGame(data.players, data.globeID, data.gameOptions, (data.saveName) ? data.saveName: undefined);
         response= {
             data: {
                 action: data.action,
@@ -100,6 +101,10 @@ export default async function wsMessageHandler(data: any) {
     case 'availableCommands':
         game = await loadGame(data.saveName);
         response = await availableCommands(game, data.playerID);
+        return response
+    case 'openGame':
+        game = await loadGame(data.saveName);
+        response = openGame(game, data.playerSlots);
         return response
     case 'echo':
         response = {

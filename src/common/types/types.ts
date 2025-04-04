@@ -207,6 +207,7 @@ export enum WsActions {
     Conquer = 'conquer',
     Move = 'move',
     AvailableCommands = 'availableCommands',
+    OpenGame = 'openGame',
 }
 export interface WsRequest {
     data: {
@@ -222,6 +223,7 @@ export interface WsRequest {
         engagement?: Engagement;
         gameOptions?: GameOptions;
         cards?: Card[];
+        playerSlots?: number[];
     }
 }
 

@@ -10,7 +10,8 @@ const jestConfig: JestConfigWithTsJest = {
         },
       ],
     },
-    setupFilesAfterEnv: ['./jest.setup.ts']
+    setupFilesAfterEnv: ['./jest.setup.ts'],
+    testEnvironment: 'node',
 }
 
 export default jestConfig

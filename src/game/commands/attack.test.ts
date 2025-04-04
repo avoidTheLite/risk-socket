@@ -157,7 +157,7 @@ describe('attack - Integration tests', () => {
             attackingTroopCount: 3,
             defendingTroopCount: 1
         }
-        game.countries[engagement.attackingCountry].armies = 10
+        game.countries[engagement.attackingCountry].armies = 15
         game.countries[engagement.defendingCountry].armies = 1;
         game.countries[engagement.attackingCountry].ownerID = 0;
         game.countries[engagement.defendingCountry].ownerID = 1;
