@@ -1,4 +1,5 @@
 import { WebSocket } from "ws";
+import { GameSlots } from "../types/types";
 
 class GameConnectionManager {
     private gameToConnections = new Map<string, Set<WebSocket>>();
@@ -144,12 +145,9 @@ class GameConnectionManager {
     
     }
 
-    getOpenGames(): {
-        saveName: string,
-        playerIDs: number[]
-    }[] {
+    getOpenGames(): GameSlots[] {
         const entries = [...this.openGameSlots.entries()];
-        return entries.map(([saveName, playerIDs]) => ({saveName, playerIDs}));
+        return entries.map(([saveName, playerIDs]) => ({saveName: saveName, playerSlots: playerIDs}));
     }
 
     getOpenGameSlots(

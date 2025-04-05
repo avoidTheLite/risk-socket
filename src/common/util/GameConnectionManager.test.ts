@@ -175,7 +175,7 @@ describe('GameConnectionManager - Open Game unit tests', () => {
         manager.openGame(testSaveName, playersToOpen);
         const expectedOpenGame = {
             saveName: testSaveName,
-            playerIDs: playersToOpen
+            playerSlots: playersToOpen
         }
         expect(manager.getOpenGames()).toContainEqual(expectedOpenGame);
     })

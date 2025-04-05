@@ -114,6 +114,11 @@ export class Game {
     }
 }
 
+export interface GameSlots {
+    saveName: string;
+    playerSlots: number[];
+}
+
 export interface GameRecord {
     saveName: string;
     id: string;
@@ -208,6 +213,8 @@ export enum WsActions {
     Move = 'move',
     AvailableCommands = 'availableCommands',
     OpenGame = 'openGame',
+    ViewOpenGames = 'viewOpenGames',
+    JoinGame = 'joinGame',
 }
 export interface WsRequest {
     data: {
@@ -238,5 +245,6 @@ export interface WsResponse {
         gameOptions?: GameOptions;
         cards?: Card[];
         availableCommands?: AvailableCommands;
+        gameSlots?: GameSlots[];
     }
 }

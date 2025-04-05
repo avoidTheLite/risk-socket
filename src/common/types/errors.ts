@@ -125,3 +125,13 @@ export class openGameError extends Error {
         this.name = args.name || 'Error';
     }
 }
+
+export class joinGameError extends Error {
+    name: string;
+
+    constructor(args: StandardErrorArgs) {
+        super(args.message);
+        Object.setPrototypeOf(this, new.target.prototype);
+        this.name = args.name || 'Error';
+    }
+}
