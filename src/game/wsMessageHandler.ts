@@ -11,22 +11,15 @@ import move from "./commands/move";
 import availableCommands from "./commands/availableCommands";
 import openGame from "./commands/openGame";
 import viewOpenGames from "./commands/viewOpenGames";
+import { WebSocket } from "ws";
+import joinGame from "./commands/joinGame";
 
-export default async function wsMessageHandler(data: any) {
+export default async function wsMessageHandler(data: any, ws: WebSocket) {
     let game: Game
     let response: WsResponse
     switch(data.action) {       
     case 'newGame':
-        game = await newGame(data.players, data.globeID, data.gameOptions, (data.saveName) ? data.saveName: undefined);
-        response= {
-            data: {
-                action: data.action,
-                gameOptions: data.gameOptions,
-                message: `New game created with save name: ${game.saveName} for ${data.players.length} players`,
-                status: "success",
-                gameState: game
-            }
-        }
+        response = await newGame(ws, data.players, data.globeID, data.gameOptions, (data.saveName) ? data.saveName: undefined);
         return response
     case 'deploy' :
         game = await loadGame(data.saveName);
@@ -110,10 +103,10 @@ export default async function wsMessageHandler(data: any) {
     case 'viewOpenGames':
         response = viewOpenGames();
         return response
-    // case 'joinGame':
-    //     game = await loadGame(data.saveName);
-    //     response = await joinGame(game, data.playerSlots);
-    //     return response
+    case 'joinGame':
+        game = await loadGame(data.saveName);
+        response = await joinGame(ws, game.saveName, data.playerSlots);
+        return response
     case 'echo':
         response = {
             data: {

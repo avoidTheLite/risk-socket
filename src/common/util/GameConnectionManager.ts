@@ -183,12 +183,13 @@ class GameConnectionManager {
     ): void {
         this.updateConnection(ws, saveName);
         if (this.getHost(saveName)) {
-
             this.reassignPlayers(ws, saveName, playerIDs);
             this.closeGameSlots(saveName, playerIDs);
+            console.log(`Reassigned player(s) while connecting to game: ${saveName}`);
         } else {
             this.assignGameHostIfNone(ws, saveName);
             this.assignPlayersToClient(ws, saveName, playerIDs);
+            console.log(`Assigned client as host and assigned player(s) while connecting to game: ${saveName}`);
 
         }
     }

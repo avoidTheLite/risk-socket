@@ -1,4 +1,4 @@
-import { Game, Player, Globe, Card, GameOptions } from '../common/types/types';
+import { Game, Player, Globe, Card, GameOptions, WsResponse } from '../common/types/types';
 import ShortUniqueId = require('short-unique-id');
 import { playerCountError } from '../common/types/errors';
 import saveGame from './saveGame';
@@ -6,10 +6,12 @@ import loadGlobe from './loadGlobe';
 import assignCountries from './services/assignCountries';
 import assignArmies from './services/assignArmies';
 import defaultCardSeed from '../common/util/test/defaultCardSeed';
+import { WebSocket } from 'ws';
+import { manager } from '../common/util/createWebSocketServer';
 
 let uid = new ShortUniqueId({ length: 10 });
 
-async function newGame(players: Player[], globeID: string, gameOptions?: GameOptions, saveName?: string) {
+async function newGame(ws: WebSocket, players: Player[], globeID: string, gameOptions?: GameOptions, saveName?: string) {
     try {
         console.log(`loading game with globe ID ${globeID}`)
         let globe: Globe = await loadGlobe(globeID);
@@ -45,8 +47,19 @@ async function newGame(players: Player[], globeID: string, gameOptions?: GameOpt
         game.countries = await assignCountries(players, globe.countries, gameOptions)
         game.players = await assignArmies(players, globe.countries)
         game = await saveGame(game) 
+        manager.connectToGame(ws, game.saveName, game.players.map((player) => player.id))
         console.log(`New game created: ${game.id} with save name: ${game.saveName}`)
-        return game
+
+        const response: WsResponse= {
+            data: {
+                action: 'newGame',
+                gameOptions: gameOptions,
+                message: `New game created with save name: ${game.saveName} for ${players.length} players`,
+                status: "success",
+                gameState: game
+            }
+        }
+        return response
     
     } catch (error) {
         throw error
