@@ -17,8 +17,31 @@ describe('Multiple game tests', () => {
         server = await startServer(port);
         client = new TestWebSocket(url);
         await client.waitUntil('open');
-        games[0] = await newGame(createTestPlayers(2), 'defaultGlobeID');
-        games[1] = await newGame(createTestPlayers(4), 'defaultGlobeID');
+
+        const newGameMessage: WsRequest = {
+            data: { 
+                action: 'newGame' as WsActions, 
+                message: 'This is the Client test message',
+                players: createTestPlayers(4),
+                globeID: 'defaultGlobeID',
+                gameOptions: {
+                    randomAssignment:false,
+                }
+            }
+        }
+        
+        const newGameResponse1: string = await new Promise ((resolve) => {
+            client.addEventListener('message', ({data}) => resolve(data.toString('utf-8')), {once: true});
+            client.send(JSON.stringify(newGameMessage));
+        })
+
+        const newGameResponse2: string = await new Promise ((resolve) => {
+            client.addEventListener('message', ({data}) => resolve(data.toString('utf-8')), {once: true});
+            client.send(JSON.stringify(newGameMessage));
+        })
+
+        games[0] = JSON.parse(newGameResponse1).data.gameState;
+        games[1] = JSON.parse(newGameResponse2).data.gameState;
     })
 
     afterAll(async () => {

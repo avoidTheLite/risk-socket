@@ -20,6 +20,7 @@ function createWebSocketServer(wsServer: Server) {
             console.error('WebSocket error:', error);
         })
         ws.on('message', async (message) => {
+            console.log('Incoming message from client:', message.toString());
             let parsedMessage: WsRequest
             try{
                 parsedMessage = JSON.parse(message.toString("utf-8"));
@@ -33,11 +34,9 @@ function createWebSocketServer(wsServer: Server) {
                     typeof parsedMessage.data.action === 'string' &&
                     isValidAction(parsedMessage.data.action)
                 ) {
-                    const response: WsResponse = await wsMessageHandler(parsedMessage.data);
+                    const response: WsResponse = await wsMessageHandler(parsedMessage.data, ws);
                     const saveName: string = response.data.gameState?.saveName;
                     if (response.data.status === 'success' && saveName){
-                        manager.updateConnection(ws, saveName);
-                        manager.assignGameHostIfNone(ws, saveName);
                         manager.getConnections(saveName).forEach(connection => {
                             if (connection !== ws && connection.readyState === WebSocket.OPEN) {
                                 connection.send(JSON.stringify(response));

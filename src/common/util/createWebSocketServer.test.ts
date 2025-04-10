@@ -1,6 +1,8 @@
 import { beforeAll, afterAll, describe, it, expect } from '@jest/globals';
 import { startServer, TestWebSocket } from './test/webSocketTestUtils';
 import createTestPlayers from './test/createTestPlayers';
+import { manager } from './createWebSocketServer';
+import { WsRequest, WsActions } from '../types/types';
 
 const port = 8080;
 const url = `ws://localhost:${port}`;
@@ -105,7 +107,6 @@ describe('WebSocket Server', () => {
                 message: 'This is the Client test message',
                 players: createTestPlayers(2),
                 globeID: 'defaultGlobeID',
-                saveName: 'testSaveName',
                 gameOptions: {
                     randomAssignment:false,
                 }
@@ -116,6 +117,26 @@ describe('WebSocket Server', () => {
             client1.send(JSON.stringify(testMessage1));
         })
 
+        const testSaveName: string = JSON.parse(responseMessage).data.gameState.saveName;
+        console.log(`Websocket test - ${testSaveName}`)
+
+        manager.openGame(testSaveName, [0]);
+        
+        const joinGameMessage: WsRequest = {
+            data: { 
+                action: 'joinGame' as WsActions, 
+                message: 'This is the Client test message',
+                playerSlots: [0],
+                saveName: testSaveName,
+            }
+        }
+
+        const joinGameResponse: string = await new Promise ((resolve) => {
+            client2.addEventListener('message', ({data}) => resolve(data.toString('utf-8')), {once: true});
+            client2.send(JSON.stringify(joinGameMessage));
+        })
+
+
         const testMessage2 = {
             data: {
                 action: 'deploy',
@@ -124,9 +145,10 @@ describe('WebSocket Server', () => {
                     targetCountry: 0,
                     armies: 19,
                 },
-                saveName: 'testSaveName',
+                saveName: testSaveName,
             }
         }
+
 
         const [responseMessage1, responseMessage2] = await Promise.all([
             new Promise<string> ((resolve) => {
@@ -137,7 +159,9 @@ describe('WebSocket Server', () => {
                 client2.send(JSON.stringify(testMessage2));
             })
         ]);
-
+        console.log(`Client 1 received ${responseMessage1}`);
+        console.log(`Client 2 received ${responseMessage2}`);
+        expect(manager.getConnections(testSaveName)).toHaveLength(2);
         expect(JSON.parse(responseMessage1).data.status).toEqual('success');
         expect(JSON.parse(responseMessage1).data.action).toEqual('deploy');
         console.log(JSON.parse(responseMessage1))

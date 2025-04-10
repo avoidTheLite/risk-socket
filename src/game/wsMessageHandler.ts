@@ -10,30 +10,21 @@ import conquer from "./commands/conquer";
 import move from "./commands/move";
 import availableCommands from "./commands/availableCommands";
 import openGame from "./commands/openGame";
+import viewOpenGames from "./commands/viewOpenGames";
+import { WebSocket } from "ws";
+import joinGame from "./commands/joinGame";
+import actionAllowed from "./services/actionAllowed";
 
-export default async function wsMessageHandler(data: any) {
+export default async function wsMessageHandler(data: any, ws: WebSocket) {
     let game: Game
     let response: WsResponse
     switch(data.action) {       
     case 'newGame':
-        game = await newGame(data.players, data.globeID, data.gameOptions, (data.saveName) ? data.saveName: undefined);
-        response= {
-            data: {
-                action: data.action,
-                gameOptions: data.gameOptions,
-                message: `New game created with save name: ${game.saveName} for ${data.players.length} players`,
-                status: "success",
-                gameState: game
-            }
-        }
+        response = await newGame(ws, data.players, data.globeID, data.gameOptions, (data.saveName) ? data.saveName: undefined);
         return response
     case 'deploy' :
         game = await loadGame(data.saveName);
-        if (game.players[game.activePlayerIndex].id !== data.playerID) {
-            throw new turnError({
-                message: `Not your turn to deploy. Active player = player ${game.activePlayerIndex}. Player ID = ${data.playerID}`
-            })
-        }
+        actionAllowed(game, data.action, data.playerID, ws);
         game = await deploy(game, data.deployment);
         response = {
             data: {
@@ -46,11 +37,7 @@ export default async function wsMessageHandler(data: any) {
         return response
     case 'endTurn':
         game = await loadGame(data.saveName);
-        if (game.activePlayerIndex !== data.playerID) {
-            throw new turnError({
-                message: `Not your turn to end. Active player = player ${game.activePlayerIndex}. Player ID = ${data.playerID}`
-            })
-        }
+        actionAllowed(game, data.action, data.playerID, ws);
         game = await endTurn(game);
         response = {
             data: {
@@ -63,39 +50,23 @@ export default async function wsMessageHandler(data: any) {
         return response
     case 'attack':
         game = await loadGame(data.saveName);
-        if (game.players[game.activePlayerIndex].id !== data.playerID) {
-            throw new turnError({
-                message: `Not your turn to attack. Active player = player ${game.activePlayerIndex}. Player ID = ${data.playerID}`
-            })
-        }
+        actionAllowed(game, data.action, data.playerID, ws);
         data.engagement.defendingTroopCount = game.countries[data.engagement.defendingCountry].armies;
         response = await attack(game, data.engagement);
         return response
     case 'cardMatch':
         game = await loadGame(data.saveName);
-        if (game.players[game.activePlayerIndex].id !== data.playerID) {
-            throw new turnError({
-                message: `Not your turn to cash in cards. Active player = player ${game.activePlayerIndex}. Player ID = ${data.playerID}`
-            })
-        }
+        actionAllowed(game, data.action, data.playerID, ws);
         response = await cardMatch(game, data.cards);
         return response
     case 'conquer':
         game = await loadGame(data.saveName);
-        if (game.players[game.activePlayerIndex].id !== data.playerID) {
-            throw new turnError({
-                message: `Not your turn to conquer. Active player = player ${game.activePlayerIndex}. Player ID = ${data.playerID}`
-            })
-        }
+        actionAllowed(game, data.action, data.playerID, ws);
         response = await conquer(game, data.engagement);
         return response
     case 'move':
         game = await loadGame(data.saveName);
-        if (game.players[game.activePlayerIndex].id !== data.playerID) {
-            throw new turnError({
-                message: `Not your turn to move. Active player = player ${game.activePlayerIndex}. Player ID = ${data.playerID}`
-            })
-        }
+        actionAllowed(game, data.action, data.playerID, ws);
         response = await move(game, data.movement);
         return response
     case 'availableCommands':
@@ -105,6 +76,13 @@ export default async function wsMessageHandler(data: any) {
     case 'openGame':
         game = await loadGame(data.saveName);
         response = openGame(game, data.playerSlots);
+        return response
+    case 'viewOpenGames':
+        response = viewOpenGames();
+        return response
+    case 'joinGame':
+        game = await loadGame(data.saveName);
+        response = await joinGame(ws, game.saveName, data.playerSlots);
         return response
     case 'echo':
         response = {
