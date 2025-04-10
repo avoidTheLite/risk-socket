@@ -2,7 +2,7 @@ import { TurnTracker, Phase, Country, Continent } from '../../common/types/types
 import calculateReinforcements from './calculateReinforcements';
 
 
-export default function nextTurn(gamePhase: Phase, activePlayerIndex: number,  countries: Country[], continents: Continent[]): TurnTracker {
+export default function updateTurnTracker(gamePhase: Phase, activePlayerIndex: number,  countries: Country[], continents: Continent[]): TurnTracker {
     if (gamePhase === 'play') {
         const reinforcements: number = calculateReinforcements(activePlayerIndex, countries, continents);
         const turnTracker: TurnTracker = {
