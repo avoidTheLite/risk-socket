@@ -14,7 +14,6 @@ describe('deploy', () => {
     test('should deploy armies to a country', async () => {
 
         game.players[game.activePlayerIndex].armies = 5
-        // const playerArmies = game.players[game.activePlayerIndex].armies
         let deployment: Deployment = {
             targetCountry: 10,
             armies: 2,
@@ -23,15 +22,17 @@ describe('deploy', () => {
         
         game.countries[deployment.targetCountry].armies = 0
         game.countries[deployment.targetCountry].ownerID = 0
-        const savedGame = await deploy(game, deployment);
+        const response = await deploy(game, deployment);
         expect(game.countries[deployment.targetCountry].armies).toBe(deployment.armies);
         expect(game.players[game.activePlayerIndex].armies).toBe(3);
+        expect(response.data.status).toBe('success');
+        expect(response.data.action).toBe('deploy');
         
     })
 
     test('should throw an error if player does not have enough armies', async () => {
 
-        const playerArmies = game.players[game.activePlayerIndex].armies
+        game.players[game.activePlayerIndex].armies = 1
         let deployment: Deployment = {
             targetCountry: 10,
             armies: 2,

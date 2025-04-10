@@ -25,28 +25,12 @@ export default async function wsMessageHandler(data: any, ws: WebSocket) {
     case 'deploy' :
         game = await loadGame(data.saveName);
         actionAllowed(game, data.action, data.playerID, ws);
-        game = await deploy(game, data.deployment);
-        response = {
-            data: {
-                action: data.action,
-                message: `${game.players[data.playerID].name} (Player ${data.playerID}) has deployed ${data.deployment.armies} armies to ${game.countries[data.deployment.targetCountry].name}`,
-                status: "success",
-                gameState: game
-            }
-        }
+        response = await deploy(game, data.deployment);
         return response
     case 'endTurn':
         game = await loadGame(data.saveName);
         actionAllowed(game, data.action, data.playerID, ws);
-        game = await endTurn(game);
-        response = {
-            data: {
-                action: data.action,
-                message: `${game.players[data.playerID].name} (Player ${data.playerID}) has ended their turn`,
-                status: "success",
-                gameState: game
-            }
-        }
+        response = await endTurn(game);
         return response
     case 'attack':
         game = await loadGame(data.saveName);
