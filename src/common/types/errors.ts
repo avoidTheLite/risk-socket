@@ -66,7 +66,7 @@ export class deployError extends Error {
     }
 }
 
-export class turnError extends Error {
+export class TurnError extends Error {
     name: string;
 
     constructor(args: StandardErrorArgs) {
