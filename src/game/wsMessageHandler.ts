@@ -2,7 +2,6 @@ import deploy from "./commands/deploy";
 import newGame from "./newGame";
 import { Game, WsResponse } from "../common/types/types";
 import loadGame from "./loadGame";
-import { turnError } from "../common/types/errors";
 import endTurn from "./commands/endTurn";
 import attack from "./commands/attack";
 import cardMatch from "./commands/cardMatch";
