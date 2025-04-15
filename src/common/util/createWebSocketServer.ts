@@ -1,8 +1,9 @@
 import {WebSocketServer, WebSocket } from 'ws';
 import {Server} from 'http'
 import wsMessageHandler from '../../game/wsMessageHandler';
-import { WsRequest, WsActions, WsResponse, Game } from '../types/types';
+import { WsRequest, WsActions, WsResponse, Game, WsEvent } from '../types/types';
 import GameConnectionManager from './GameConnectionManager';
+import createSocketEventMessage from './createSocketEventMessage';
 
 
 const manager = new GameConnectionManager();
@@ -37,9 +38,10 @@ function createWebSocketServer(wsServer: Server) {
                     const response: WsResponse = await wsMessageHandler(parsedMessage.data, ws);
                     const saveName: string = response.data.gameState?.saveName;
                     if (response.data.status === 'success' && saveName){
+                        const socketEventMessage: WsEvent = createSocketEventMessage(response);
                         manager.getConnections(saveName).forEach(connection => {
                             if (connection !== ws && connection.readyState === WebSocket.OPEN) {
-                                connection.send(JSON.stringify(response));
+                                connection.send(JSON.stringify(socketEventMessage));
                             }
                         })
                     }

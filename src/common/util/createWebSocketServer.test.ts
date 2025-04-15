@@ -162,7 +162,7 @@ describe('WebSocket Server', () => {
         console.log(`Client 1 received ${responseMessage1}`);
         console.log(`Client 2 received ${responseMessage2}`);
         expect(manager.getConnections(testSaveName)).toHaveLength(2);
-        expect(JSON.parse(responseMessage1).data.status).toEqual('success');
+        expect(JSON.parse(responseMessage1).type).toEqual('event');
         expect(JSON.parse(responseMessage1).data.action).toEqual('deploy');
         console.log(JSON.parse(responseMessage1))
         console.log(JSON.parse(responseMessage2))
