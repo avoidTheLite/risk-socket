@@ -22,31 +22,30 @@ export default async function saveGame(game: Game) {
         matches: game.matches,
         lastEngagement: JSON.stringify(game.lastEngagement)
     }
-    try{
-        const saveExists = await db('gameState').where('saveName', '=', game.saveName).first();
-        console.log(`saveExists: ${saveExists}`)
-        if (saveExists) {
-            const result: number = await db('gameState').where({saveName: game.saveName}).update(gameRecord);
-            if (!result) {
-                throw new dbInsertError({
-                    message: 'Failed to update game in database',
-                })
-            }
-            savedGame = await loadGame(game.saveName);
-        } else {
-            const result: number[] = await db('gameState').insert(gameRecord);
-            if (!result || result.length === 0) {
-                throw new dbInsertError({
-                    message: 'Failed to insert game into database',
-                })
-            }
-            savedGame = await loadGame(game.saveName);
+    
+    const saveExists = await db('gameState').where('saveName', '=', game.saveName).first();
+    console.log(`saveExists: ${saveExists}`)
+    if (saveExists) {
+        const result: number = await db('gameState').where({saveName: game.saveName}).update(gameRecord);
+        if (!result) {
+            throw new dbInsertError({
+                message: 'Failed to update game in database',
+            })
         }
-       
-    }  
+    } else {
+        const result: number[] = await db('gameState').insert(gameRecord);
+        if (!result || result.length === 0) {
+            throw new dbInsertError({
+                message: 'Failed to insert game into database',
+            })
+        }
+    }
+    try {
+        savedGame = await loadGame(game.saveName);
+    }    
     catch (error) {
         throw new saveGameError({
-            message: 'Failed to save game',
+            message: 'Failed to save and retrieve saved game',
         })
     }
     return savedGame
