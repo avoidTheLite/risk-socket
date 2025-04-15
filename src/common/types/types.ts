@@ -217,6 +217,7 @@ export enum WsActions {
     JoinGame = 'joinGame',
 }
 export interface WsRequest {
+    type?: 'request';
     data: {
         gameID?: string;
         action: WsActions;
@@ -235,16 +236,30 @@ export interface WsRequest {
 }
 
 export interface WsResponse {
+    type?: 'response';
     data: {
         action: string;
         message: string;
         status: string;
         engagement?: Engagement;
         movement?: Movement;
+        deployment?: Deployment;
         gameState?: Game;
         gameOptions?: GameOptions;
         cards?: Card[];
         availableCommands?: AvailableCommands;
         gameSlots?: GameSlots[];
+    }
+}
+
+export interface WsEvent {
+    type: 'event',
+    data: {
+        action: string;
+        message: string;
+        engagement?: Engagement;
+        movement?: Movement;
+        deployment?: Deployment;
+        gameState: Game;
     }
 }
