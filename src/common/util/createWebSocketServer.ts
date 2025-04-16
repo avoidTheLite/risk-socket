@@ -48,6 +48,7 @@ function createWebSocketServer(wsServer: Server) {
                     ws.send(JSON.stringify(response));
                 } else {
                     const response: WsResponse = {
+                        type: 'response',
                         data: {
                             action: 'invalidAction',
                             message: 'Invalid message format or action not supported',
@@ -58,6 +59,7 @@ function createWebSocketServer(wsServer: Server) {
                 }
             } catch (error) {
                 const response: WsResponse = {
+                    type: 'response',
                     data: {
                         action: parsedMessage.data.action,
                         message: `There was an error procesing your request ${error}`,
