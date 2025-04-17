@@ -65,7 +65,7 @@ export default async function wsMessageHandler(data: any, ws: WebSocket) {
         return response
     case 'joinGame':
         game = await loadGame(data.saveName);
-        response = await joinGame(ws, game.saveName, data.playerSlots);
+        response = await joinGame(ws, game, data.playerSlots);
         return response
     case 'echo':
         response = {
