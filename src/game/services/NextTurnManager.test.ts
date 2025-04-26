@@ -10,6 +10,7 @@ describe('Next Turn Manager', () => {
 
     beforeEach(() => {
         game = createTestGame(4);
+        game.countries = assignCountries(game.players, game.countries);
         nextTurnManager = new NextTurnManager(game);
     })
 
@@ -75,5 +76,27 @@ describe('Next Turn Manager', () => {
         const response = await nextTurnManager.endTurn();
         expect(response.data.gameState.players[0].cards.length).toBe(0);
         expect(response.data.gameState.cardsAvailable.length).toBe(44);
+    })
+})
+
+describe('Next Turn With defeated player', () => {
+    let nextTurnManager: NextTurnManager
+    let game: Game
+
+    beforeEach(() => {
+        game = createTestGame(4);
+        game.countries[0].ownerID = 0;
+        game.countries[1].ownerID = 1;
+        game.countries[2].ownerID = 2;
+        nextTurnManager = new NextTurnManager(game);
+    })
+
+    test('should skip defeated player', async () => {
+        game.turn = 3;
+        game.activePlayerIndex = 2;
+        game.phase = 'play';
+        const response = await nextTurnManager.endTurn();
+        expect(response.data.gameState.activePlayerIndex).toBe(0);
+        expect(response.data.gameState.turn).toBe(5);
     })
 })

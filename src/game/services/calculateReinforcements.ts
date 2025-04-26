@@ -1,7 +1,16 @@
 import { Continent, Country } from "../../common/types/types";
 
-export default function calculateReinforcements(activePlayerIndex: number, countries: Country[], continents: Continent[]) {
+export function numberOfCountriesOwnedByPlayer(countries: Country[], playerIndex: number) {
     let countriesOwned: number = 0
+    for (let i = 0; i < countries.length; i++) {
+        if (countries[i].ownerID === playerIndex) {
+            countriesOwned += 1;
+        }
+    }
+    return countriesOwned
+}
+
+export default function calculateReinforcements(activePlayerIndex: number, countries: Country[], continents: Continent[]) {
     let reinforcements: number = 0
     const countryMap = new Map<number, Country>();
     countries.forEach(country => countryMap.set(country.id, country));
@@ -26,12 +35,7 @@ export default function calculateReinforcements(activePlayerIndex: number, count
         }
        
     }
-    for (let i = 0; i < countries.length; i++) {
-        if (countries[i].ownerID === activePlayerIndex) {
-            countriesOwned += 1;
-        }
-       
-    }
+    const countriesOwned: number = numberOfCountriesOwnedByPlayer(countries, activePlayerIndex);
     reinforcements += Math.floor(countriesOwned/3);
     if (reinforcements < 3) {
         reinforcements = 3

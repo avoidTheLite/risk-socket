@@ -220,6 +220,49 @@ describe('conquer - Unit tests', () => {
         expect(game.countries[engagement.defendingCountry].color).toBe(game.countries[engagement.attackingCountry].color);
         expect(game.turnTracker.phase).toBe('combat');
     })
+   
+})
 
-    
+describe('Conquer - defeating player', () => {
+    let game: Game;
+    let engagement: Engagement;
+
+    beforeEach(() => {
+        game = createTestGame(4);
+        game.phase = 'play';
+        game.turnTracker.phase = 'conquer';
+        game.lastEngagement = {
+            attackingCountry: 0,
+            defendingCountry: 1,
+            attackingTroopCount: 3,
+            defendingTroopCount: 1,
+            attackersLost: 0,
+            defendersLost: 1,
+            conquered: true
+        }
+        game.countries[0].ownerID = 0;
+        game.countries[0].armies = 5;
+        game.countries[1].ownerID = 1;
+        game.countries[1].armies = 0;
+        game.players[0].cards = [game.cardsAvailable[0]];
+        game.players[1].cards = [game.cardsAvailable[1]];
+        engagement = {
+            attackingCountry: 0,
+            defendingCountry: 1,
+            attackingTroopCount: 3,
+            conquered: true
+        }
+    })
+
+    test('should transfer cards when defeating a player', async () => {
+        const response = await conquer(game, engagement);
+        expect(response.data.gameState.players[0].cards.length).toBe(2);
+    })
+
+    test('Should send defeated player message', async () => {
+        const cardsTransferred: number = game.players[engagement.defendingCountry].cards.length;
+        const response = await conquer(game, engagement);
+        const defeatedMessage: string = `${game.players[engagement.attackingCountry].name} (Player ${game.players[engagement.attackingCountry].id}) has defeated ${game.players[engagement.defendingCountry].name} (Player ${game.players[engagement.defendingCountry].id}) and received ${cardsTransferred} cards. `;
+        expect(response.data.message).toContain(defeatedMessage);
+    })
 })
