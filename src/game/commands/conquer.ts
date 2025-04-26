@@ -1,6 +1,21 @@
 import { Game, Engagement } from "../../common/types/types";
 import saveGame from "../saveGame";
 import { conquerError } from "../../common/types/errors";
+import { numberOfCountriesOwnedByPlayer } from "../services/calculateReinforcements";
+
+
+export function playerIsDefeated(game: Game, playerID: number): boolean {
+    if (numberOfCountriesOwnedByPlayer(game.countries, playerID) === 0) {
+        return true;
+    }
+    return false
+}
+
+function transferCards(game: Game, engagement: Engagement) {
+    const attackingPlayerID = game.countries[engagement.attackingCountry].ownerID;
+    const defendingPlayerID = game.countries[engagement.defendingCountry].ownerID;
+    game.players[attackingPlayerID].cards = [...game.players[attackingPlayerID].cards, ...game.players[defendingPlayerID].cards]; 
+}
 
 export default async function conquer(game: Game, engagement: Engagement) {
     if (game.countries[engagement.defendingCountry].armies != 0) {
@@ -30,18 +45,24 @@ export default async function conquer(game: Game, engagement: Engagement) {
     if(game.lastEngagement.attackingCountry !== engagement.attackingCountry) {
         throw new conquerError({ message: `You must conquer from the same country as your last attack. Current country: ${game.countries[engagement.attackingCountry].name}`});
     }
-
+    const defendingPlayerID = game.countries[engagement.defendingCountry].ownerID;
     game.countries[engagement.attackingCountry].armies -= engagement.attackingTroopCount;
     game.countries[engagement.defendingCountry].armies = engagement.attackingTroopCount;
     game.countries[engagement.defendingCountry].ownerID = game.activePlayerIndex;
     game.countries[engagement.defendingCountry].color = game.players[game.activePlayerIndex].color;
+    let defeatedMessage: string = '';
+    if (playerIsDefeated(game, defendingPlayerID)) {
+        const cardsTransferred: number = game.players[engagement.defendingCountry].cards.length;
+        transferCards(game, engagement);
+        defeatedMessage = `${game.players[engagement.attackingCountry].name} (Player ${game.players[engagement.attackingCountry].id}) has defeated ${game.players[engagement.defendingCountry].name} (Player ${game.players[engagement.defendingCountry].id}) and received ${cardsTransferred} cards. `;
+    }
     game.turnTracker.phase = 'combat';
     engagement.conquered = false;
     game = await saveGame(game);
     const response = {
         data: {
             action: 'conquer',
-            message: `${game.players[game.activePlayerIndex].name} (Player ${game.activePlayerIndex}) has conquered ${game.countries[engagement.defendingCountry].name} with ${engagement.attackingTroopCount} armies from ${game.countries[engagement.attackingCountry].name}. `,
+            message: `${defeatedMessage} ${game.players[game.activePlayerIndex].name} (Player ${game.activePlayerIndex}) has conquered ${game.countries[engagement.defendingCountry].name} with ${engagement.attackingTroopCount} armies from ${game.countries[engagement.attackingCountry].name}. `,
             status: "success",
             engagement: engagement,
             gameState: game,
