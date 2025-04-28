@@ -21,6 +21,13 @@ describe('Next Turn Manager', () => {
         expect(response.data.gameState.turn).toBe(1);
     })
 
+    test('should distribute armies when ending deploy phase', async () => {
+        game.phase = 'deploy';
+        game.countries = assignCountries(game.players, game.countries);
+        const response = await nextTurnManager.endTurn();
+        expect(response.data.gameState.players[0].armies).toBeGreaterThan(0);
+    })
+
     test('should not end deploy phase when players have armies remaining', async () => {
         game.players[game.activePlayerIndex].armies = 2;
         game.players[game.activePlayerIndex + 1].armies = 2;
