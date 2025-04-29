@@ -10,8 +10,17 @@ export function numberOfCountriesOwnedByPlayer(countries: Country[], playerIndex
     return countriesOwned
 }
 
+export function playerIsDefeated(countries: Country[], playerID: number): boolean {
+    if (numberOfCountriesOwnedByPlayer(countries, playerID) === 0) {
+        return true;
+    }
+    return false
+}
 export default function calculateReinforcements(activePlayerIndex: number, countries: Country[], continents: Continent[]) {
     let reinforcements: number = 0
+    if (playerIsDefeated(countries, activePlayerIndex)) {
+        return reinforcements
+    }
     const countryMap = new Map<number, Country>();
     countries.forEach(country => countryMap.set(country.id, country));
 

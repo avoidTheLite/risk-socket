@@ -11,8 +11,6 @@ export default function actionAllowed(game: Game, action: WsActions, playerID: n
 
     const controllingClient: WebSocket = manager.getOwner(game.saveName, game.activePlayerIndex);
     if (controllingClient != ws) {
-        console.log(`ws = ${JSON.stringify(ws)}`)
-        console.log(`controllingClient = ${JSON.stringify(controllingClient)}`)
         throw new PlayerControlError({ message: `Unable to perform action: ${action} for player ${playerID}. You do not control this player`});
     }
 

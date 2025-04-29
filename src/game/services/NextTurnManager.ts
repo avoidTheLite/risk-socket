@@ -1,8 +1,7 @@
 import { Game, Player, Card, TurnTracker, WsResponse } from "../../common/types/types";
-import calculateReinforcements from "./calculateReinforcements";
+import calculateReinforcements, { playerIsDefeated } from "./calculateReinforcements";
 import saveGame from "../saveGame";
 import { TurnError } from "../../common/types/errors";
-import { playerIsDefeated } from "../commands/conquer";
 
 class NextTurnManager{
     private game: Game;
@@ -25,60 +24,56 @@ class NextTurnManager{
         
     }
 
-    calculateNextTurnTracker(): TurnTracker {
-        if (this.game.phase === 'play') {
-            const reinforcements: number = calculateReinforcements(this.game.activePlayerIndex, this.game.countries, this.game.continents);
-            const turnTracker: TurnTracker = {
-                phase: 'deploy',
-                earnedCard: false,
-                armiesEarned: reinforcements,
-            }
-            return turnTracker
-        } 
-        else if (this.game.phase === 'deploy') {
-                const turnTracker: TurnTracker = {
-                    phase: 'deploy',
-                    earnedCard: false,
-                    armiesEarned: 0,
-                }
-            return turnTracker
+    resetTurnTracker(): void {
+        this.game.turnTracker = {
+            phase: 'deploy',
+            earnedCard: false,
+            armiesEarned: 0,
         }
     }
 
-    drawCard(): Card {
+    drawCard(): void {
         const selectedCard: Card = this.game.cardsAvailable[Math.floor(Math.random() * this.game.cardsAvailable.length)];
-        return selectedCard
+        this.game.players[this.game.activePlayerIndex].cards.push(selectedCard);
+        this.game.cardsAvailable.splice(this.game.cardsAvailable.indexOf(selectedCard), 1); 
     }
 
     setNextTurn(): void {
-        this.game.turn += 1;
-    }
-
-    setNextPlayerTurn(): void {
-        this.game.activePlayerIndex = (this.game.turn - 1) % this.game.players.length;
-        this.game.turnTracker = this.calculateNextTurnTracker();
-        this.game.players[this.game.activePlayerIndex].armies += this.game.turnTracker.armiesEarned;
-    }
-
-    async endTurn(): Promise<WsResponse> {
         if(this.isEndOfDeployPhase()) {
             this.game.phase = 'play';
             this.game.turn = 1;
             this.game.activePlayerIndex = 0;
         } else {
-            if (this.game.turnTracker.earnedCard) {
-                const card = this.drawCard()
-                this.game.players[this.game.activePlayerIndex].cards.push(card);
-                this.game.cardsAvailable.splice(this.game.cardsAvailable.indexOf(card), 1); 
-            }
+            this.game.turn += 1;   
+        }
+    }
+
+    setNextPlayerTurn(): void {
+        this.game.activePlayerIndex = (this.game.turn - 1) % this.game.players.length;
+        this.resetTurnTracker();
+    }
+
+    distributeReinforcements(): void {
+        const reinforcements: number = calculateReinforcements(this.game.activePlayerIndex, this.game.countries, this.game.continents);
+        this.game.players[this.game.activePlayerIndex].armies += reinforcements;
+        this.game.turnTracker.armiesEarned = reinforcements;
+    }
+
+    async endTurn(): Promise<WsResponse> {
+        if (this.game.turnTracker.earnedCard) this.drawCard()
+        this.setNextTurn();
+        this.setNextPlayerTurn();
+        let skippedTurns = 0;
+        while (playerIsDefeated(this.game.countries, this.game.players[this.game.activePlayerIndex].id)) {
+            console.log(`Player ${this.game.activePlayerIndex} is defeated. Skipping their turn.`)
             this.setNextTurn();
             this.setNextPlayerTurn();
-            while (playerIsDefeated(this.game, this.game.players[this.game.activePlayerIndex].id)) {
-                console.log(`Player ${this.game.activePlayerIndex} is defeated. Skipping their turn.`)
-                this.setNextTurn();
-                this.setNextPlayerTurn();
+            skippedTurns += 1;
+            if (skippedTurns >= this.game.players.length) {
+                throw new TurnError({ message: `Unable to End turn. All players are defeated.`}) 
             }
         }
+        if(this.game.phase === 'play') this.distributeReinforcements();
         try {
             this.game = await saveGame(this.game);
         } catch(error) {
