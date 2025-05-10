@@ -225,6 +225,9 @@ export enum WsActions {
     OpenGame = 'openGame',
     ViewOpenGames = 'viewOpenGames',
     JoinGame = 'joinGame',
+    SaveGame = 'saveGame',
+    ViewSavedGames = 'viewSavedGames',
+    LoadGame = 'loadGame',
 }
 export interface WsRequest {
     type?: 'request';
