@@ -22,7 +22,7 @@ jest.mock('../loadGame', () => ({
 import viewOpenGames from "./viewOpenGames";
 import { manager } from "../../common/util/createWebSocketServer";
 import { describe, test, expect } from '@jest/globals';
-import { WsResponse, GameSlots, GameSlotsRecord } from "../../common/types/types";
+import { WsResponse, GameSlots, GameMetaData } from "../../common/types/types";
 
 
 
@@ -54,7 +54,7 @@ describe('View open games - unit tests', () => {
             { saveName: 'testSaveName2', playerSlots: [2, 3] },
         ]
 
-        const mockGameSlotsRecord: GameSlotsRecord[] = [{ 
+        const mockGameSlotsRecord: GameMetaData[] = [{ 
             saveName: mockGameSlots[0].saveName,
             playerSlots: mockGameSlots[0].playerSlots,
             openSlots: mockGameSlots[0].playerSlots.length,

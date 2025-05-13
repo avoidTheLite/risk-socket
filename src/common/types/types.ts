@@ -119,7 +119,7 @@ export interface GameSlots {
     playerSlots: number[];
 }
 
-export interface GameSlotsRecord extends GameSlots {
+export interface GameMetaData extends GameSlots {
     id: string;
     playerCount: number;
     openSlots: number;
@@ -129,6 +129,15 @@ export interface GameSlotsRecord extends GameSlots {
     name: string;
 }
 
+export interface SaveGameRecord {
+    saveName: string;
+    id: string;
+    name: string | null;
+    players: string;
+    globeID: string;
+    turn: number;
+    phase: Phase;
+}
 export interface GameRecord {
     saveName: string;
     id: string;
@@ -261,7 +270,8 @@ export interface WsResponse {
         gameOptions?: GameOptions;
         cards?: Card[];
         availableCommands?: AvailableCommands;
-        gameSlots?: GameSlotsRecord[];
+        gameSlots?: GameMetaData[];
+        savedGames?: GameMetaData[];
     }
 }
 

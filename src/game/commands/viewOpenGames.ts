@@ -1,15 +1,15 @@
 import { manager } from "../../common/util/createWebSocketServer";
-import { Game, GameSlots, GameSlotsRecord,WsResponse } from "../../common/types/types";
+import { Game, GameSlots, GameMetaData ,WsResponse } from "../../common/types/types";
 import loadGame from "../loadGame";
 
 export default async function viewOpenGames(): Promise<WsResponse> {
 
     const openGames: GameSlots[] = manager.getOpenGames();
-    let openGamesData: GameSlotsRecord[] = [];
+    let openGamesData: GameMetaData[] = [];
     if (openGames.length > 0) {
         for (let i = 0; i < openGames.length; i++) {
             const game: Game = await loadGame(openGames[i].saveName);
-            const gameData: GameSlotsRecord = {
+            const gameData: GameMetaData = {
                 saveName: openGames[i].saveName,
                 playerSlots: openGames[i].playerSlots,
                 openSlots: openGames[i].playerSlots.length,
