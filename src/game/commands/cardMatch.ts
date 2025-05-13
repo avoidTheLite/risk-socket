@@ -27,6 +27,9 @@ export default async function cardMatch(game: Game, cards: Card[]) {
         }
     }
     const armiesEarned = matchValue[game.matches + 1]
+    for (let i=0; i<cards.length; i++) {
+        game.players[game.activePlayerIndex].cards.splice(game.players[game.activePlayerIndex].cards.indexOf(cards[i]), 1)
+    }
     game.players[game.activePlayerIndex].armies += armiesEarned
     game.turnTracker.armiesEarned += armiesEarned
     game.matches += 1
@@ -36,7 +39,8 @@ export default async function cardMatch(game: Game, cards: Card[]) {
             action: 'cardMatch',
             message: `You gain ${armiesEarned} armies from your match: ${cards[0].name}, ${cards[1].name}, ${cards[2].name}`,
             status: 'success',
-            cards: cards
+            cards: cards,
+            gameState: game
         }
     }
     return response
