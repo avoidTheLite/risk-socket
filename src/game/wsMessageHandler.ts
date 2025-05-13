@@ -8,10 +8,12 @@ import cardMatch from "./commands/cardMatch";
 import conquer from "./commands/conquer";
 import move from "./commands/move";
 import availableCommands from "./commands/availableCommands";
+import loadGameAndConnect from "./loadGameAndConnect";
 import openGame from "./commands/openGame";
 import viewOpenGames from "./commands/viewOpenGames";
 import { WebSocket } from "ws";
 import joinGame from "./commands/joinGame";
+import viewSavedGames from "./viewSavedGames";
 import actionAllowed from "./services/actionAllowed";
 
 export default async function wsMessageHandler(data: any, ws: WebSocket) {
@@ -20,6 +22,12 @@ export default async function wsMessageHandler(data: any, ws: WebSocket) {
     switch(data.action) {       
     case 'newGame':
         response = await newGame(ws, data.players, data.globeID, data.gameOptions, (data.saveName) ? data.saveName: undefined);
+        return response
+    case 'loadGame':
+        response = await loadGameAndConnect(ws, data.saveName);
+        return response
+    case 'viewSavedGames':
+        response = await viewSavedGames();
         return response
     case 'deploy' :
         game = await loadGame(data.saveName);
