@@ -14,7 +14,7 @@ describe('Card Match - Unit Tests', () => {
             game.cardsAvailable[0],
             game.cardsAvailable[1],
         ];
-        const cards = game.players[game.activePlayerIndex].cards;
+        const cards = [...game.players[game.activePlayerIndex].cards];
         await expect(cardMatch(game, cards)).rejects.toThrow(cardMatchError);
     })
 
@@ -40,7 +40,7 @@ describe('Card Match - Unit Tests', () => {
             game.cardsAvailable[1],
             game.cardsAvailable[3],
         ];
-        const cards = game.players[game.activePlayerIndex].cards;
+        const cards = [...game.players[game.activePlayerIndex].cards];
         await expect(cardMatch(game, cards)).rejects.toThrow(cardMatchError);
     })
 
@@ -51,7 +51,7 @@ describe('Card Match - Unit Tests', () => {
             game.cardsAvailable[3],
             game.cardsAvailable[6],
         ];
-        const cards = game.players[game.activePlayerIndex].cards;
+        const cards = [...game.players[game.activePlayerIndex].cards];
         await cardMatch(game, cards);
         expect(game.turnTracker.armiesEarned).toBe(matchValue[1]);
         expect(game.matches).toBe(1);
@@ -64,7 +64,7 @@ describe('Card Match - Unit Tests', () => {
             game.cardsAvailable[1],
             game.cardsAvailable[2],
         ];
-        const cards = game.players[game.activePlayerIndex].cards;
+        const cards = [...game.players[game.activePlayerIndex].cards];
         await cardMatch(game, cards);
         expect(game.turnTracker.armiesEarned).toBe(matchValue[1]);
         expect(game.matches).toBe(1);
@@ -77,10 +77,22 @@ describe('Card Match - Unit Tests', () => {
             game.cardsAvailable[1],
             game.cardsAvailable[42],
         ];
-        const cards = game.players[game.activePlayerIndex].cards;
+        const cards = [...game.players[game.activePlayerIndex].cards];
         await cardMatch(game, cards);
         expect(game.turnTracker.armiesEarned).toBe(matchValue[1]);
         expect(game.matches).toBe(1);
+    })
+
+    test('Should remove cards from player when card match is successful', async () => {
+        let game: Game = createTestGame(4);
+        game.players[game.activePlayerIndex].cards = [
+            game.cardsAvailable[0],
+            game.cardsAvailable[1],
+            game.cardsAvailable[2],
+        ];
+        const cards = [...game.players[game.activePlayerIndex].cards];
+        await cardMatch(game, cards);
+        expect(game.players[game.activePlayerIndex].cards.length).toBe(0);
     })
 
 })
