@@ -1,61 +1,35 @@
-import db from "../db/db";
-import { Game, GameRecord, GameSlots, SaveGameRecord, GameMetaData, Player, WsResponse } from "../common/types/types";
-import { manager } from "../common/util/createWebSocketServer";
-import { gameNotFoundError } from "../common/types/errors";
+import { SaveGameRecord, GameMetaData, Player, WsResponse } from "../common/types/types";
+import { stateManager } from "../common/util/createWebSocketServer";
 
 
 export default async function viewSavedGames(): Promise<WsResponse> {
-    return db.select(
-        "gameState.saveName",
-        "gameState.id",
-        "gameState.players",
-        "gameState.globeID",
-        "gameState.turn",
-        "gameState.phase",
-        "gameState.name",
-    ).from('gameState')
-    .then((savedGameRecords: SaveGameRecord[]) => {
-        if (savedGameRecords.length === 0) {
-            throw new gameNotFoundError({
-                message: `No games found'`
-            })
-        }
-        else {
-            let savedGames: GameMetaData[] = [];
-            for (let i=0; i<savedGameRecords.length; i++) {
-                let savedGame: GameMetaData = {
-                    saveName: '',
-                    playerSlots: [],
-                    openSlots: 0,
-                    id: '',
-                    playerCount: 0,
-                    globeID: '',
-                    turn: 0,
-                    phase: 'deploy',
-                    name: ''
-                };
-                const players: Player[] = typeof savedGameRecords[i].players === 'string' ? JSON.parse(savedGameRecords[i].players) : savedGameRecords[i].players;
-                savedGame.playerSlots = players.map((player: Player) => player.id);
-                savedGame.playerCount = players.length;
-                savedGame.openSlots = 0;
-                savedGame.saveName = savedGameRecords[i].saveName;
-                savedGame.id = savedGameRecords[i].id;
-                savedGame.globeID = savedGameRecords[i].globeID;
-                savedGame.turn = savedGameRecords[i].turn;
-                savedGame.phase = savedGameRecords[i].phase;
-                savedGame.name = savedGameRecords[i].name;
-                savedGames.push(savedGame);
-            }
-            return {
-                type: 'response',
-                data: {
-                    action: 'viewSavedGames',
-                    message: `There are ${savedGames.length} saved games.`,
-                    status: 'success',
-                    savedGames: savedGames,
-                }
-            };
-        }
+    
+    const saveGameRecords: SaveGameRecord[] = await stateManager.getSavedGames();
+    let savedGames: GameMetaData[] = [];
+    for (let i=0; i<saveGameRecords.length; i++) {
+        const players: Player[] = typeof saveGameRecords[i].players === 'string' ? JSON.parse(saveGameRecords[i].players) : saveGameRecords[i].players;
+        let savedGame: GameMetaData = {
+            saveName: saveGameRecords[i].saveName,
+            playerSlots: players.map((player: Player) => player.id),
+            openSlots: 0,
+            id:  saveGameRecords[i].id,
+            playerCount: players.length,
+            globeID:  saveGameRecords[i].globeID,
+            turn:  saveGameRecords[i].turn,
+            phase:  saveGameRecords[i].phase,
+            name:  saveGameRecords[i].name,
+            created_at: saveGameRecords[i].created_at,
+            updated_at: saveGameRecords[i].updated_at
+        };
+        savedGames.push(savedGame);
     }
-    )
+    return {
+        type: 'response',
+        data: {
+            action: 'viewSavedGames',
+            message: `There are ${savedGames.length} saved games.`,
+            status: 'success',
+            savedGames: savedGames,
+        }
+    };
 }

@@ -127,6 +127,8 @@ export interface GameMetaData extends GameSlots {
     turn: number;
     phase: Phase;
     name: string;
+    created_at?: string;
+    updated_at?: string;
 }
 
 export interface SaveGameRecord {
@@ -137,6 +139,8 @@ export interface SaveGameRecord {
     globeID: string;
     turn: number;
     phase: Phase;
+    created_at: string;
+    updated_at: string;
 }
 export interface GameRecord {
     saveName: string;

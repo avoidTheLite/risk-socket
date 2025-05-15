@@ -3,10 +3,12 @@ import {Server} from 'http'
 import wsMessageHandler from '../../game/wsMessageHandler';
 import { WsRequest, WsActions, WsResponse, Game, WsEvent } from '../types/types';
 import GameConnectionManager from './GameConnectionManager';
+import GameStateManager from './GameStateManager';
 import createSocketEventMessage from './createSocketEventMessage';
 
 
 const manager = new GameConnectionManager();
+const stateManager = new GameStateManager();
 function createWebSocketServer(wsServer: Server) {
     const wss: WebSocketServer = new WebSocketServer({
         server: wsServer,
@@ -81,5 +83,5 @@ function isValidAction(action: WsActions) {
     return Object.values(WsActions).includes(action);
 }
 
-export { manager };
+export { manager, stateManager };
 export default createWebSocketServer
