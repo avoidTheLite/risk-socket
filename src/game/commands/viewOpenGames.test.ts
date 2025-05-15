@@ -20,9 +20,9 @@ jest.mock('../loadGame', () => ({
 }))
 
 import viewOpenGames from "./viewOpenGames";
-import { manager } from "../../common/util/createWebSocketServer";
+import { manager, stateManager } from "../../common/util/createWebSocketServer";
 import { describe, test, expect } from '@jest/globals';
-import { WsResponse, GameSlots, GameMetaData } from "../../common/types/types";
+import { WsResponse, GameSlots, GameMetaData, SaveGameRecord } from "../../common/types/types";
 
 
 
@@ -78,7 +78,42 @@ describe('View open games - unit tests', () => {
         },
         ]
 
+        const mockSavedGameRecords: SaveGameRecord[] = [{
+            saveName: mockGameSlots[0].saveName,
+            id: "testGameID",
+            name: "Test Game",
+            players: JSON.stringify([
+                { id: 1, name: "Player 1", color: "red", armies: 1 },
+                { id: 2, name: "Player 2", color: "blue", armies: 1 },
+                { id: 3, name: "Player 3", color: "black", armies: 1 },
+                { id: 4, name: "Player 4", color: "orange", armies: 1 },
+                { id: 5, name: "Player 5", color: "green", armies: 1 }
+            ]),
+            globeID: "globe123",
+            turn: 1,
+            phase: "deploy",
+            created_at: '',
+            updated_at: '',
+        },{
+            saveName: mockGameSlots[1].saveName,
+            id: "testGameID",
+            name: "Test Game",
+            players: JSON.stringify([
+                { id: 1, name: "Player 1", color: "red", armies: 1 },
+                { id: 2, name: "Player 2", color: "blue", armies: 1 },
+                { id: 3, name: "Player 3", color: "black", armies: 1 },
+                { id: 4, name: "Player 4", color: "orange", armies: 1 },
+                { id: 5, name: "Player 5", color: "green", armies: 1 }
+            ]),
+            globeID: "globe123",
+            turn: 1,
+            phase: "deploy",
+            created_at: '',
+            updated_at: '',
+        }]
+
         jest.spyOn(manager, 'getOpenGames').mockReturnValueOnce(mockGameSlots);
+        jest.spyOn(stateManager, 'getSavedGames').mockResolvedValueOnce(mockSavedGameRecords);
         const response: WsResponse = await viewOpenGames();
 
         expect(response.data.action).toBe('viewOpenGames');
