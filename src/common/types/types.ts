@@ -241,6 +241,7 @@ export enum WsActions {
     SaveGame = 'saveGame',
     ViewSavedGames = 'viewSavedGames',
     LoadGame = 'loadGame',
+    QuitGame = 'quitGame',
 }
 export interface WsRequest {
     type?: 'request';

@@ -15,6 +15,7 @@ import { WebSocket } from "ws";
 import joinGame from "./commands/joinGame";
 import viewSavedGames from "./viewSavedGames";
 import actionAllowed from "./services/actionAllowed";
+import quitGame from "./quitGame";
 
 export default async function wsMessageHandler(data: any, ws: WebSocket) {
     let game: Game
@@ -25,6 +26,9 @@ export default async function wsMessageHandler(data: any, ws: WebSocket) {
         return response
     case 'loadGame':
         response = await loadGameAndConnect(ws, data.saveName);
+        return response
+    case 'quitGame':
+        response = await quitGame(ws);
         return response
     case 'viewSavedGames':
         response = await viewSavedGames();
