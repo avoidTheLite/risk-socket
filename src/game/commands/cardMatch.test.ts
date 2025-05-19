@@ -51,7 +51,7 @@ describe('Card Match - Unit Tests', () => {
             game.cardsAvailable[3],
             game.cardsAvailable[6],
         ];
-        const cards = game.players[game.activePlayerIndex].cards;
+        const cards = [...game.players[game.activePlayerIndex].cards];
         await cardMatch(game, cards);
         expect(game.turnTracker.armiesEarned).toBe(matchValue[1]);
         expect(game.matches).toBe(1);
@@ -64,7 +64,7 @@ describe('Card Match - Unit Tests', () => {
             game.cardsAvailable[1],
             game.cardsAvailable[2],
         ];
-        const cards = game.players[game.activePlayerIndex].cards;
+        const cards = [...game.players[game.activePlayerIndex].cards];
         await cardMatch(game, cards);
         expect(game.turnTracker.armiesEarned).toBe(matchValue[1]);
         expect(game.matches).toBe(1);
@@ -77,7 +77,7 @@ describe('Card Match - Unit Tests', () => {
             game.cardsAvailable[1],
             game.cardsAvailable[42],
         ];
-        const cards = game.players[game.activePlayerIndex].cards;
+        const cards = [...game.players[game.activePlayerIndex].cards];
         await cardMatch(game, cards);
         expect(game.turnTracker.armiesEarned).toBe(matchValue[1]);
         expect(game.matches).toBe(1);
