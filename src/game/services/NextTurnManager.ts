@@ -61,6 +61,7 @@ class NextTurnManager{
 
     async endTurn(): Promise<WsResponse> {
         if (this.game.turnTracker.earnedCard) this.drawCard()
+            const currentPlayerID: number = this.game.players[this.game.activePlayerIndex].id;
         this.setNextTurn();
         this.setNextPlayerTurn();
         let skippedTurns = 0;
@@ -82,7 +83,7 @@ class NextTurnManager{
         const response: WsResponse = {
             data: {
                 action: 'endTurn',
-                message: `${this.game.players[this.game.activePlayerIndex].name} (Player ${this.game.activePlayerIndex}) has ended their turn`,
+                message: `${this.game.players[currentPlayerID].name} (Player ${currentPlayerID}) has ended their turn`,
                 status: "success",
                 gameState: this.game
             }
