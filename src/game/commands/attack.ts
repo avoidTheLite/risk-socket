@@ -47,7 +47,7 @@ export default async function attack(game: Game, engagement: Engagement): Promis
         }
     }
     else {
-        message = `${game.players[game.activePlayerIndex].name} (Player ${game.activePlayerIndex}) has attacked ${game.countries[engagement.defendingCountry].name} with ${engagement.attackingTroopCount} armies from ${game.countries[engagement.attackingCountry].name}. `
+        message = `${game.players[game.activePlayerIndex].name} (Player ${game.activePlayerIndex}) has attacked ${game.countries[engagement.defendingCountry].name} from ${game.countries[engagement.attackingCountry].name}, losing ${engagement.attackersLost} armies and ${game.countries[engagement.defendingCountry].name} losing ${engagement.defendersLost} armies.`
     }
     game.lastEngagement = engagement;
     game = await saveGame(game);
