@@ -1,6 +1,6 @@
 {
   "name": "risk-socket",
-  "description": "A persistent WebSocket service that keeps online Risk games running on the server and perfectly in sync without the stale-state scramble of stateless HTTP.",
+  "description": "A persistent WebSocket service that keeps online Risk games running on the server without the stale-state scramble of stateless HTTP.",
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
